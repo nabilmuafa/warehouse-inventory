@@ -64,7 +64,7 @@ Terbentuk folder baru bernama `main` di root repository proyek. Saya kemudian me
 
 Agar proyek dapat menjalankan aplikasi `main`, route proyek perlu dikonfigurasi. Untuk ini, saya menambahkan beberapa hal pada `urls.py` di folder proyek (`warehouse_inventory`). Yang saya tambahkan adalah `include` pada baris
 
-```
+```python
 from django.urls import path, include
 ```
 
@@ -218,4 +218,18 @@ Virtual environment bukan suatu hal yang wajib untuk membuat aplikasi Django, te
 
 ### Apakah itu MVC, MVT, MVVM? Apakah perbedaan dari ketiganya?
 
-TBW
+#### MVC
+
+MVC adalah salah satu pola desain arsitektur pada sebuah aplikasi. MVC memisahkan sebuah aplikasi menjadi tiga komponen, yaitu **Model**, **View**, dan **Controller**. Pada arsitektur MVC, komponen Model bertugas sebagai komponen yang mengelola segala macam logic terkait data yang dibutuhkan user. Sementara itu, komponen View bertugas sebagai komponen yang mengelola logic UI dari aplikasi. Terakhir, controller berfungsi sebagai perantara antara Model dan View. Komponen controller memproses request, memanipulasi data menggunakan Model dan berinteraksi dengan View untuk me-render halaman web yang bersesuaian dengan apa yang direquest user.
+
+#### MVT
+
+MVT adalah pola desain arsitektur software yang digunakan oleh framework Django. MVT adalah singkatan dari **Model**, **View**, **Template**, yang merupakan komponen-komponen pada arsitektur ini. Mirip dengan arsitektur MVC, Model pada arsitektur ini berfungsi sebagai komponen yang mengelola logic terkait data yang dibutuhkan user dari basis data. Akan tetapi, pada arsitektur ini, View berfungsi sebagai jembatan/perantara antara Model dan template. View mengelola request dari user, berkomunikasi dengan Model untuk mengambil data yang diperlukan dari database, kemudian merender data tersebut ke template untuk dikembalikan ke user. Sementara itu, template berfungsi sebagai komponen yang mengelola UI dari aplikasi, seperti komponen statisnya yang terdapat di dalam HTML.
+
+#### MVVM
+
+MVVM adalah pola desain arsitektur software lain yang diciptakan oleh arsitek software Microsoft. MVVM memisahkan aplikasi menjadi tiga komponen, yaitu **Model**, **View**, dan **ViewModel**. Pada arsitektur ini, Model berperan sebagai komponen yang mengelola data. Berbeda dengan arsitektur-arsitektur sebelumnya, pada arsitektur ini Model tidak berkomunikasi dengan View. Bahkan Model dianggap "tidak mengetahui" bahwa ada View. Begitu pula dengan View, pada arsitektur ini View hanya berfungsi sebagai user interface dan tidak memiliki logic aplikasi. Logic yang dimiliki oleh View hanyalah ketika user berinteraksi dengannya, View akan menotifikasi ViewModel. ViewModel pada arsitektur ini berperan sebagai link antara View dan ViewModel. ViewModel mengimplementasikan data binding dan berbagai macam instruksi kepada View, serta mengupdate Model apabila diketahui terdapat interaksi pada View. Apabila terdapat perubahan pada Model atau interaksi pada View, ViewModel akan mengirimkan notifikasi kepada View ataupun Model dengan event notifikasi.
+
+#### Perbedaan di antara ketiganya
+
+Hal mendasar yang membedakan MVT dengan arsitektur lain adalah adanya Template sebagai bagian yang penting dari arsitekturnya yang menyimpan struktur UI dan presentasinya. Arsitektur ini juga memisahkan Template dengan View. Pada arsitektur MVC, yang menjadi pembeda adalah adanya separation of concerns yang lebih jelas, yaitu View yang mengelola UI, Model yang mengelola data, dan Controller yang mengelola interaksi user. Terakhir, yang membedakan MVVM dengan arsitektur lainnya adalah sifatnya yang lebih data-driven dalam men-display UI. View dan Model terikat dengan ViewModel, dan setiap perubahan data yang terjadi atau interaksi user akan mengupdate Model dan View secara otomatis.
