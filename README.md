@@ -1,4 +1,4 @@
-# [Warehouse Inventory]()
+# [Warehouse Inventory](https://warehouse-inventory.adaptable.app)
 
 Proyek Django untuk Tugas 2 mata kuliah Pemrograman Berbasis Platform Ganjil 2023/2024. Dibuat oleh Muhammad Nabil Mu'afa - 2206024972
 
@@ -169,3 +169,53 @@ urlpatterns = [
 Dari kode ini, kita memberi nama aplikasi ini dengan `main` pada variabel `app_name`. Untuk mendefinisikan pola URL aplikasi `main`, kita menggunakan `path` dari `django.urls` dan memanggil `path('', show_main, name="show_main")`. Fungsi tersebut mendefinisikan fungsi `show_main` dari `main.views` sebagai tampilan yang akan dimunculkan ketika URL aplikasi diakses.
 
 </details>
+<details>
+<summary>Melakukan deployment ke Adaptable</summary>
+
+Sebelum melakukan deployment, saya kembali mencoba menjalankan aplikasi di localhost dengan command:
+
+```
+python3 manage.py runserver
+```
+
+dan aplikasi saya berjalan dengan baik, sehingga sudah bisa saya push ke repository dan saya deploy ke Adaptable. Saya hanya perlu menjalankan command untuk melakukan add, commit, dan push:
+
+```
+git fetch
+git pull
+git add .
+git commit -m "create main app"
+git push
+```
+
+Pada command ini, saya hanya menggunakan `git pull` dan `git push` tanpa perlu men-specify branch yang digunakan karena saya membuat repository di local dengan melakukan clone terhadap yang ada di GitHub, sehingga repository local saya sudah di-set untuk track remote repository yang terdapat di GitHub.
+
+Setelah itu, seperti tutorial pertama, saya melakukan deploy di Adaptable. Saya menggunakan Python App Template dengan PostgreSQL dengan skema database yang digunakan. Command untuk menjalankan aplikasi yang saya gunakan adalah:
+
+```
+python manage.py migrate && gunicorn warehouse_inventory.wsgi
+```
+
+Setelah menunggu sekitar 5 menit, aplikasi saya sudah terdeploy dan bisa dilihat pada [website ini](https://warehouse-inventory.adaptable.app).
+
+</details>
+
+### Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara `urls.py`, `views.py`, `models.py`, dan berkas `html`.
+
+![](https://cdn.discordapp.com/attachments/1133956580728127550/1151007158771654778/image.png)
+
+Ketika user mengakses aplikasi, request akan dikirimkan ke `urls.py`. File `urls.py` mengolah request dan meneruskan request tersebut ke `views.py` yang bersangkutan, yaitu `views.py` dari halaman yang di-request oleh user.
+
+`views.py` kemudian berkomunikasi dengan `models.py`, dimana `models.py` berkomunikasi dengan database untuk meminta dan menerima data apabila ada data yang dibutuhkan dari database berdasarkan request user.
+
+Setelah data diterima, data akan diteruskan untuk dimasukkan oleh `views.py` ke template HTML yang sudah disediakan. Setelah template dengan data sudah di-render, halaman tersebut akan dikembalikan kepada user sebagai HTML response untuk diakses oleh user.
+
+### Mengapa kita menggunakan virtual environment? Apakah kita tetap dapat membuat aplikasi web berbasis Django tanpa menggunakan virtual environment?
+
+Virtual environment digunakan agar dependency antar proyek-proyek yang berbeda dapat diisolasikan dan tidak terjadi konflik, terutama konflik versi. Selain itu, menggunakan virtual environment dapat mempermudah collaborative work. Apabila user lain ingin memodifikasi suatu aplikasi kemudian melakukan tes dengan menjalankannya, mereka hanya perlu membuat dan mengaktifkan virtual environment, kemudian menginstall requirements yang diperlukan untuk bisa menjalankan aplikasinya di komputer mereka. Apabila terdapat perbedaan versi dependency pada komputer berbeda, hal ini bisa diatasi dengan virtual environment.
+
+Virtual environment bukan suatu hal yang wajib untuk membuat aplikasi Django, tetapi akan cukup sulit untuk memperbaiki apabila terdapat konflik versi antara dependency proyek dan dan versi yang terinstall di komputer.
+
+### Apakah itu MVC, MVT, MVVM? Apakah perbedaan dari ketiganya?
+
+TBW
