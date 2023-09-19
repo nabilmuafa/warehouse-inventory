@@ -11,9 +11,10 @@ Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/
   - [MVC, MVT, MVVM](#apakah-itu-mvc-mvt-mvvm-apakah-perbedaan-dari-ketiganya)
 - [README.md Tugas 3](#tugas-3)
   - [Implementasi Checklist Tugas 3](#implementasi-checklist-tugas-3)
-  - []()
-  - []()
-  - []()
+  - [Perbedaan form POST dan form GET pada Django](#apa-perbedaan-antara-form-post-dan-form-get-pada-django)
+  - [Perbedaan XML, JSON, dan HTML](#apa-perbedaan-utama-antara-xml-json-dan-html-dalam-konteks-pengiriman-data)
+  - [Mengapa JSON lebih sering digunakan dalam pertukaran data?](#mengapa-json-sering-digunakan-dalam-pertukaran-data-antara-aplikasi-web-modern)
+  - [Mengakses URL melalui Postman](#mengakses-url-melalui-postman)
 
 ## Tugas 2
 
