@@ -4,6 +4,7 @@ from django.core import serializers
 from main.forms import ItemForm
 from django.urls import reverse
 from main.models import Item
+from django.contrib import messages
 
 def show_main(request):
     items = Item.objects.all()
@@ -12,7 +13,8 @@ def show_main(request):
         'app_name': "Warehouse Inventory",
         'name': "Muhammad Nabil Mu'afa",
         'class': "PBP C",
-        'items': items
+        'items': items,
+        'last_entry': request.session.pop('last_entry', None)
     }
 
     return render(request, "main.html", context)
@@ -22,6 +24,12 @@ def create_item(request):
 
     if form.is_valid() and request.method == "POST":
         form.save()
+        last_entry = Item.objects.latest('id')
+        request.session['last_entry'] = {
+            "name": last_entry.name,
+            "amount": last_entry.amount
+        }
+        messages.success(request, "Item added successfully.")
         return HttpResponseRedirect(reverse('main:show_main'))
 
     context = {'form': form}

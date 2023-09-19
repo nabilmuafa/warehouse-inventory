@@ -4,6 +4,11 @@
     <h1 class="font-sans">{{ app_name }}</h1>
     <h5>{{ name }}</h5>
     <h5>{{ class }}</h5>
+    {% if last_entry %}
+    <div id="message">
+        Kamu menyimpan {{last_entry.amount}} {{last_entry.name}} pada Warehouse
+    </div>
+    {% endif %}
     <table>
         <tr>
             <th>Name</th>
@@ -12,7 +17,6 @@
         </tr>
     
         {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
-    
         {% for item in items %}
             <tr>
                 <td>{{item.name}}</td>
