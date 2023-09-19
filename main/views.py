@@ -13,6 +13,7 @@ def show_main(request):
         'name': "Muhammad Nabil Mu'afa",
         'class': "PBP C",
         'items': items,
+        # adds the latest entry to parameter if there is one
         'last_entry': request.session.pop('last_entry', None)
     }
 
@@ -23,7 +24,7 @@ def create_item(request):
 
     if form.is_valid() and request.method == "POST":
         form.save()
-        # stores the last item inserted
+        # stores the last item inserted to current session
         last_entry = Item.objects.latest('id')
         request.session['last_entry'] = {
             "name": last_entry.name,
