@@ -1,13 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warehouse Inventory</title>
-</head>
-<body>
-    <h1>{{app_name}}</h1>
-    <h5>{{name}}</h5>
-    <h5>{{class}}</h5>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="font-sans">{{ app_name }}</h1>
+    <h5>{{ name }}</h5>
+    <h5>{{ class }}</h5>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Description</th>
+        </tr>
+    
+        {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
+    
+        {% for item in items %}
+            <tr>
+                <td>{{item.name}}</td>
+                <td>{{item.amount}}</td>
+                <td>{{item.description}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <br />
+    
+    <a href="{% url 'main:create_item' %}">
+        <button>
+            Add New Product
+        </button>
+    </a>
+{% endblock content %}
