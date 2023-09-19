@@ -1,8 +1,23 @@
 # [Warehouse Inventory](https://warehouse-inventory.adaptable.app)
 
-Proyek Django untuk Tugas 2 mata kuliah Pemrograman Berbasis Platform Ganjil 2023/2024. Dibuat oleh Muhammad Nabil Mu'afa - 2206024972
+Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/2024. Dibuat oleh Muhammad Nabil Mu'afa - 2206024972
 
-### Bagaimana cara saya mengimplementasi checklist yang ada?
+### Daftar Isi
+
+- [README.md Tugas 2](#tugas-2)
+  - [Implementasi Checklist Tugas 2](#implementasi-checklist-tugas-2)
+  - [Bagan request client ke webapp berbasis Django](#buatlah-bagan-yang-berisi-request-client-ke-web-aplikasi-berbasis-django-beserta-responnya-dan-jelaskan-pada-bagan-tersebut-kaitan-antara-urlspy-viewspy-modelspy-dan-berkas-html)
+  - [Mengapa kita menggunakan virtual environment?](#mengapa-kita-menggunakan-virtual-environment-apakah-kita-tetap-dapat-membuat-aplikasi-web-berbasis-django-tanpa-menggunakan-virtual-environment)
+  - [MVC, MVT, MVVM](#apakah-itu-mvc-mvt-mvvm-apakah-perbedaan-dari-ketiganya)
+- [README.md Tugas 3](#tugas-3)
+  - [Implementasi Checklist Tugas 3](#implementasi-checklist-tugas-3)
+  - []()
+  - []()
+  - []()
+
+## Tugas 2
+
+### Implementasi Checklist Tugas 2
 
 <details>
 <summary>Membuat proyek Django</summary>
@@ -233,3 +248,312 @@ MVVM adalah pola desain arsitektur software lain yang diciptakan oleh arsitek so
 #### Perbedaan di antara ketiganya
 
 Hal mendasar yang membedakan MVT dengan arsitektur lain adalah adanya Template sebagai bagian yang penting dari arsitekturnya yang menyimpan struktur UI dan presentasinya. Arsitektur ini juga memisahkan Template dengan View. Pada arsitektur MVC, yang menjadi pembeda adalah adanya separation of concerns yang lebih jelas, yaitu View yang mengelola UI, Model yang mengelola data, dan Controller yang mengelola interaksi user. Terakhir, yang membedakan MVVM dengan arsitektur lainnya adalah sifatnya yang lebih data-driven dalam men-display UI. View dan Model terikat dengan ViewModel, dan setiap perubahan data yang terjadi atau interaksi user akan mengupdate Model dan View secara otomatis.
+
+## Tugas 3
+
+### Implementasi Checklist Tugas 3
+
+<details>
+<summary>Menambahkan input form</summary>
+
+Sebelum menambahkan form, karena page utama dan page form akan memiliki bagian atas (`<head>`) yang sama, maka kita bisa menggunakan suatu template lain yang terpisah agar lebih mengefisienkan kode. Untuk itu, saya membuat directory `template/` baru di root project dan mengisinya dengan file `base.html`. Isi file tersebut sebagai berikut:
+
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Warehouse Inventory</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/lib/index.min.js"></script>
+    {% block meta %} {% endblock meta %}
+  </head>
+
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+</html>
+```
+
+`base.html` ini menyimpan bagian atas dari suatu page, sehingga bisa kita gunakan untuk membuat page lain yang memiliki bagian atas yang sama dengan cara di-extend pada file template lain.
+
+Sebelum `base.html` bisa digunakan sebagai template, kita perlu melakukan konfigurasi pada settings.py agar `base.html` terdeteksi sebagai template. Berikut adalah baris kode yang saya tambahkan:
+
+```python
+...
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        ...
+    }
+]
+...
+```
+
+Setelah ini, `base.html` bisa digunakan sebagai template. Sebelum itu, saya mengubah `main.html` pada `main/templates` terlebih dahulu agar menggunakan `base.html` sebagai template dasarnya:
+
+```html
+{% extends 'base.html' %} {% block content %}
+<h1 class="font-sans">{{ app_name }}</h1>
+<h5>{{ name }}</h5>
+<h5>{{ class }}</h5>
+{% endblock content %}
+```
+
+`main.html` sudah menggunakan `base.html` sebagai template dasarnya. Kita bisa fokus ke form.
+
+Untuk menambahkan form, diperlukan file baru yaitu `forms.py`. Form ini akan digunakan untuk memasukkan entry baru sesuai dengan model yang kita gunakan. Module `ModelForm` akan digunakan sebagai dasar dari form ini. Saya mengisi `forms.py` dengan code berikut:
+
+```python
+from django.forms import ModelForm
+from main.models import Item
+
+class ItemForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = ["name", "amount", "description"]
+```
+
+Karena nama model yang saya gunakan adalah `Item`, maka yang saya import pada awal code adalah `Item`. Kemudian saya definisikan class `ItemForm` sebagai form yang akan saya gunakan. Di dalam class ini, terdapat class `Meta` yang memiliki atribut `model` yang isinya adalah model yang saya gunakan, kemudian `fields` yang berisi fields yang akan diinput pada form.
+
+Setelah mendefinisikan `forms.py`, saya kembali memodifikasi `views.py` untuk bisa menampilkan form. Terdapat beberapa bagian yang saya modifikasi.
+
+Pertama, menambahkan import:
+
+```python
+from django.http import HttpResponseRedirect, HttpResponse
+from main.forms import ItemForm
+from django.urls import reverse
+```
+
+- `HttpResponseRedirect` untuk redirect setelah submit form. `HttpResponse` akan digunakan ketika memroses data ke bentuk JSON dan XML, jadi saya tambahkan dari awal.
+- `import ItemForm` mengimport form ke views agar bisa digunakan
+- `reverse` mengambil detail url melalui file urls.py
+
+Kedua, menambahkan fungsi:
+
+```python
+def create_item(request):
+    form = ItemForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        # stores the last item inserted to current session
+        last_entry = Item.objects.latest('id')
+        request.session['last_entry'] = {
+            "name": last_entry.name,
+            "amount": last_entry.amount
+        }
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "create_item.html", context)
+```
+
+Secara garis besar, fungsi ini akan menampilkan form dengan membuka page `create_item.html`. Apabila form disubmit (request methodnya POST) dan isinya valid, maka yang diinput akan disimpan ke database kemudian web app akan kembali redirect ke halaman utama. Sebelum kembali ke halaman utama, disini saya mengimplementasikan pesan submit (untuk skor bonus). Saya menyimpan objek terakhir yang disimpan pada form, kemudian saya simpan ke session dari request dengan key `last_entry` dan value berupa dictionary berisi nama barang dan jumlah barang.
+
+Ketiga, saya mengubah fungsi `show_main()`:
+
+```python
+def show_main(request):
+    items = Item.objects.all()
+
+    context = {
+        'app_name': "Warehouse Inventory",
+        'name': "Muhammad Nabil Mu'afa",
+        'class': "PBP C",
+        'items': items,
+        # adds the latest entry to parameter if there is one
+        'last_entry': request.session.pop('last_entry', None)
+    }
+
+    return render(request, "main.html", context)
+```
+
+Saya mengambil seluruh objek `Item` yang ada di database, lalu menambahkannya ke `context` sebagai value untuk kemudian ditampilkan di HTML. Saya juga menambahkan key dan value lain, yaitu `last_entry` sebagai item yang terakhir diisi. Untuk mengambil valuenya, saya pop value yang disimpan di session (agar session menjadi kosong) dari request tadi. Sekarang `last_entry` berisi atribut `name` dan `amount` dari item yang terakhir diinput.
+
+Setelah memodifikasi `views.py`, saya memodifikasi `urls.py` yang ada pada `main`. Saya menambahkan dua baris berikut:
+
+```python
+from main.views import show_main, create_item
+
+urlpatterns = [
+    path('', show_main, name='show_main'),
+    path('create-item', create_item, name="create_item"),
+    ...
+]
+```
+
+Intinya saya mengimport `create_item` dari `views.py` serta menambahkan path untuk page form.
+
+Setelah itu, saya membuat file HTML baru untuk page form yang diberi nama `create_item.html` pada `main/templates`. File tersebut saya isi dengan:
+
+```html
+{% extends 'base.html' %} {% block content %}
+<h1>Add New Item</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+    <tr>
+      <td></td>
+      <td>
+        <input type="submit" value="Add Item" />
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% endblock %}
+```
+
+Secara garis besar, HTML ini 'mengimpor' `base.html` sebagai template kode, kemudian mendefinisikan content untuk mengisi block content yang sudah didefinisikan pula pada `base.html`. HTML ini membuat page form, dan fields yang didefinisikan pada form di-display dengan mengubahnya menjadi tabel. Halaman ini memiliki CSRF token yang berfungsi sebagai security.
+
+Terakhir, pada `main.html`, saya menambahkan kode berikut di bawah elemen yang sudah ada sebelumnya di dalam `content`:
+
+```html
+{% if last_entry %}
+<div id="message">
+  Kamu menyimpan {{last_entry.amount}} {{last_entry.name}} pada Warehouse
+</div>
+{% endif %}
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Amount</th>
+    <th>Description</th>
+  </tr>
+  {% for item in items %}
+  <tr>
+    <td>{{item.name}}</td>
+    <td>{{item.amount}}</td>
+    <td>{{item.description}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br />
+
+<a href="{% url 'main:create_item' %}">
+  <button>Add New Product</button>
+</a>
+```
+
+Secara garis besar, bagian HTML ini menampilkan item yang ada pada database dengan menggunakan sistem tabel dan menambahkan tombol untuk menyimpan item baru pada bagian bawah. Item yang ditampilkan diambil dari value dengan key `items` yang diberikan oleh `views.py` ketika me-render, lalu di-iterasi dengan for loop.
+
+Pada bagian atas, saya menambahkan sebuah if statement yang memeriksa `last_entry`. Apabila `last_entry` tidak kosong, artinya kita sedang di-redirect setelah baru saja menambahkan item (karena session dari request ada isinya), sehingga kode akan memunculkan pesan. Tetapi jika `last_entry` kosong, maka tidak ada item yang baru ditambahkan, sehingga kita tidak perlu menampilkan apa-apa.
+
+</details>
+<details>
+<summary>Menambahkan fungsi views untuk melihat objek dalam JSON & XML</summary>
+
+> Note: Instruksi pada checklist meminta membuat fungsi views untuk melihat dalam format HTML, tetapi saya asumsikan fungsi show_main() sudah memenuhi karena men-display data dalam bentuk tabel di HTML.
+
+Sebelum bisa menampilkan data dalam kedua format tersebut, saya menambahkan satu module untuk di-import (karena `HttpResponse` sudah di-import di awal):
+
+```python
+from django.core import serializers
+```
+
+Serializer diperlukan untuk men-'translate' objek pada model menjadi bentuk lain. Dalam kasus ini dapat kita gunakan untuk mentranslate objek menjadi XML dan JSON.
+
+Untuk menampilkan data dalam bentuk XML, saya membuat 2 fungsi pada `views.py`:
+
+```python
+def show_xml(request):
+    data = Item.objects.all()
+    return HttpResponse(serializers.serialize('xml', data), content_type="application/xml")
+
+def show_xml_by_id(request, id):
+    data = Item.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize('xml', data), content_type="application/xml")
+```
+
+Fungsi yang pertama mengembalikan seluruh objek yang ada pada database dalam bentuk XML. Hal ini dilakukan dengan mengambil seluruh objek yang ada pada model, kemudian melakukan serializing terhadap data tersebut menjadi XML, dan diubah menjadi respon HTTP. Fungsi yang kedua pun sama, hanya saja objek yang diambil dilakukan filtering berdasarkan ID, sehingga hanya objek dengan ID yang sama yang akan diambil.
+
+Untuk menampilkan data dalam bentuk JSON, saya membuat 2 fungsi juga pada `views.py`:
+
+```python
+def show_json(request):
+    data = Item.objects.all()
+    return HttpResponse(serializers.serialize('json', data), content_type="application/json")
+
+def show_json_by_id(request, id):
+    data = Item.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize('json', data), content_type="application/json")
+```
+
+Cara kerjanya sama persis dengan fungsi XML di atas, hanya saja objek di-serialize menjadi JSON.
+
+</details>
+<details>
+<summary>Membuat routing URL untuk masing-masing views</summary>
+
+Untuk menambahkan routing URL, saya mengimport fungsi-fungsi XML dan JSON yang telah saya buat ke `urls.py`:
+
+```python
+from main.views import show_main, create_item, show_xml, show_json, show_json_by_id, show_xml_by_id
+```
+
+Kemudian, saya hanya perlu menambahkan path untuk masing-masing fungsi:
+
+```python
+urlpatterns = [
+    ...
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name="show_json"),
+    path('xml/<int:id>/', show_xml_by_id, name="show_xml_by_id"),
+    path('json/<int:id>/', show_json_by_id, name="show_json_by_id")
+]
+```
+
+Path yang pertama dan kedua adalah untuk menampilkan seluruh data pada database dalam format XML atau JSON, yang menggunakan fungsi `show_xml` dan `show_json` dari views. Path yang ketiga dan keempat adalah untuk menampilkan data berdasarkan id yang di-input pada path dalam format XML atau JSON menggunakan fungsi `show_xml_by_id` dan fungsi `show_json_by_id`. Misalnya, untuk melihat data dengan id 1 dalam bentuk JSON, maka kita dapat membuka url `http://localhost:8000/json/1`, dan seterusnya.
+
+</details>
+
+### Apa perbedaan antara form POST dan form GET pada Django?
+
+| POST                                                                           | GET                                                                                     |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Ketika disubmit, data dari form disimpan melalui body HTTP request             | Ketika disubmit, data dari form disimpan sebagai parameter query di address bar         |
+| Tidak terlihat di URL, sehingga lebih secure untuk informasi sensitif          | Terlihat di URL, sehingga data apapun yang diproses dapat dilihat                       |
+| Request POST tidak di-cache, sehingga data request tidak disimpan oleh browser | Request GET bisa di-cache, bisa menimbulkan masalah request berulang kali tanpa sengaja |
+| Melakukan request yang sama berulang kali bisa memberikan hasil berbeda        | Melakukan request yang sama berulang kali tetap memberikan hasil yang sama              |
+
+### Apa perbedaan utama antara XML, JSON, dan HTML dalam konteks pengiriman data?
+
+HTML digunakan untuk menampilkan data yang telah diproses. XML adalah bahasa markup dengan data yang terstruktur seperti pohon dari root, branch, hingga leaves dan menggunakan tag. JSON digunakan untuk menyimpan dan mengirimkan data dan menggunakan pasangan key-value. XML dan JSON keduanya sama-sama digunakan untuk menyimpan atau mengirimkan data.
+
+### Mengapa JSON sering digunakan dalam pertukaran data antara aplikasi web modern?
+
+JSON memiliki struktur yang jauh lebih simple, human-readable dan machine-readable karena menggunakan pasangan key-value, sehingga lebih mudah untuk membaca objek-objeknya (parse) atau menulis ke file JSON. Bahkan di bahasa seperti Python, file JSON dapat diubah menjadi dictionary Python karena adanya kesamaan struktur yang menggunakan pasangan key-value.
+
+### Mengakses URL melalui Postman
+
+#### GET / (HTML)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1153757084467339294/image.png?width=954&height=595)
+
+#### GET /json (JSON)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1153757155351080970/image.png?width=954&height=595)
+
+#### GET /json/1 (JSON)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1153757201027043429/image.png?width=954&height=595)
+
+#### GET /xml (XML)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1153757245096591401/image.png?width=954&height=595)
+
+#### GET /xml/1 (XML)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1153757302176878603/image.png?width=954&height=595)
