@@ -1,19 +1,20 @@
 {% extends 'base.html' %} 
 
 {% block content %}
-<h1>Add New Item</h1>
-
-<form method="POST">
-    {% csrf_token %}
-    <table>
+<div class="container flex flex-col items-center mx-auto">
+    <p class="text-4xl font-bold py-8">Add New Item</p>
+    <form method="POST">
+        {% csrf_token %}
+    <table class="">
         {{ form.as_table }}
         <tr>
             <td></td>
             <td>
-                <input type="submit" value="Add Item"/>
+                <input class="border-2 rounded-full bg-blue-500 hover:bg-blue-700 font-medium text-white py-1 px-3 cursor-pointer" type="submit" value="Add Item"/>
             </td>
         </tr>
     </table>
 </form>
+</div>
 
 {% endblock %}

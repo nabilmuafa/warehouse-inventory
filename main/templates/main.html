@@ -1,34 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="font-sans">{{ app_name }}</h1>
-    <h5>{{ name }}</h5>
-    <h5>{{ class }}</h5>
+<div class="container flex flex-col mx-auto">
+    <div class="header flex justify-between items-center mb-8">
+        <p class="text-4xl font-bold py-8">{{ app_name }}</p>
+        <a class="pt-2" href="{% url 'main:create_item' %}">
+            <button class="transition-color ease-in-out duration-100 font-medium text-white bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-full">Add new item</button>
+        </a>
+    </div>
+    <p class="mb-8">{{ name }} - {{ class }}
+        <span class="mx-4">
+            <a href="{% url 'main:logout' %}">
+                <button class="font-montserrat bg-blue-500 hover:bg-blue-700 font-medium text-white rounded-full px-4 py-1">
+                    Logout
+                </button>
+            </a>
+        </span>
+    </p>
     {% if last_entry %}
-    <div id="message">
-        Kamu menyimpan {{last_entry.amount}} {{last_entry.name}} pada Warehouse
+    <div class="mb-4">
+        <p class="font-bold text-center">Kamu menyimpan {{last_entry.amount}} {{last_entry.name}} pada Warehouse!</p>
     </div>
     {% endif %}
-    <table>
+    <table class="table-fixed mb-8">
         <tr>
-            <th>Name</th>
-            <th>Amount</th>
-            <th>Description</th>
+            <th class="border-2 py-3 px-2">Name</th>
+            <th class="border-2 py-3 px-2 w-36">Amount</th>
+            <th class="border-2 py-3 px-2 w-4/6">Description</th>
         </tr>
         {% for item in items %}
-            <tr>
-                <td>{{item.name}}</td>
-                <td>{{item.amount}}</td>
-                <td>{{item.description}}</td>
-            </tr>
+        <tr>
+            <td class="border-2 py-2 px-2">{{item.name}}</td>
+            <td class="border-2 py-2 px-2">{{item.amount}}</td>
+            <td class="border-2 py-2 px-2">{{item.description}}</td>
+        </tr>
         {% endfor %}
     </table>
-    
-    <br />
-    
-    <a href="{% url 'main:create_item' %}">
-        <button>
-            Add New Product
-        </button>
-    </a>
+</div>
 {% endblock content %}

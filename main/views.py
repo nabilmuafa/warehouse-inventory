@@ -1,10 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core import serializers
 from main.forms import ItemForm
 from django.urls import reverse
 from main.models import Item
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='/login')
 def show_main(request):
     items = Item.objects.all()
 
@@ -18,6 +23,34 @@ def show_main(request):
     }
 
     return render(request, "main.html", context)
+
+def register(request):
+    form = UserCreationForm()
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {"form": form}
+    return render(request, "register.html", context)
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('main:show_main')
+        else:
+            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    return render(request, "login.html", context)
+
+def logout_user(request):
+    logout(request)
+    return redirect('main:login')
 
 def create_item(request):
     form = ItemForm(request.POST or None)
