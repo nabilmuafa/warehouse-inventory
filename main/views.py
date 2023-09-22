@@ -35,7 +35,10 @@ def register(request):
             messages.success(request, 'Your account has been successfully created!')
             return redirect('main:login')
     context = {"form": form}
-    return render(request, "register.html", context)
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('main:show_main'))
+    else:
+        return render(request, "register.html", context)
 
 def login_user(request):
     if request.method == "POST":
@@ -50,7 +53,10 @@ def login_user(request):
         else:
             messages.info(request, 'Sorry, incorrect username or password. Please try again.')
     context = {}
-    return render(request, "login.html", context)
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('main:show_main'))
+    else:
+        return render(request, "login.html", context)
 
 def logout_user(request):
     logout(request)
