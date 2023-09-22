@@ -12,11 +12,11 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='/login')
 def show_main(request):
-    items = Item.objects.all()
+    items = Item.objects.filter(user=request.user)
 
     context = {
         'app_name': "Warehouse Inventory",
-        'name': "Muhammad Nabil Mu'afa",
+        'name': request.user.username,
         'class': "PBP C",
         'items': items,
         # adds the latest entry to parameter if there is one
@@ -62,7 +62,9 @@ def create_item(request):
     form = ItemForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
-        form.save()
+        item = form.save(commit=False)
+        item.user = request.user
+        item.save()
         # stores the last item inserted to current session
         last_entry = Item.objects.latest('id')
         request.session['last_entry'] = {
