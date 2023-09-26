@@ -19,11 +19,8 @@ def show_main(request):
         'name': request.user.username,
         'class': "PBP C",
         'items': items,
-        # adds the latest entry to parameter if there is one
-        'last_entry': request.session.pop('last_entry', None),
         'last_login': request.COOKIES['last_login'],
     }
-
     return render(request, "main.html", context)
 
 def register(request):
@@ -71,16 +68,27 @@ def create_item(request):
         item = form.save(commit=False)
         item.user = request.user
         item.save()
-        # stores the last item inserted to current session
         last_entry = Item.objects.latest('id')
-        request.session['last_entry'] = {
-            "name": last_entry.name,
-            "amount": last_entry.amount
-        }
+        messages.info(request, f"Kamu telah menyimpan {last_entry.name} sebanyak {last_entry.amount} di Warehouse Inventory!")
         return HttpResponseRedirect(reverse('main:show_main'))
 
     context = {'form': form}
     return render(request, "create_item.html", context)
+
+def decrement(request, id):
+    item = Item.objects.get(pk=id)
+    if item.amount == 1:
+        messages.info(request, "Jumlah item tidak boleh kurang dari 1!")
+    else:
+        item.amount -= 1
+        item.save(update_fields=["amount"])
+    return HttpResponseRedirect(reverse("main:show_main"))
+
+def increment(request, id):
+    item = Item.objects.get(pk=id)
+    item.amount += 1
+    item.save(update_fields=["amount"])
+    return HttpResponseRedirect(reverse("main:show_main"))
 
 def show_xml(request):
     data = Item.objects.all()
