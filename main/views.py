@@ -75,6 +75,10 @@ def create_item(request):
     context = {'form': form}
     return render(request, "create_item.html", context)
 
+def delete(request, id):
+    Item.objects.filter(pk=id).delete()
+    return HttpResponseRedirect(reverse("main:show_main"))
+
 def decrement(request, id):
     item = Item.objects.get(pk=id)
     if item.amount == 1:
