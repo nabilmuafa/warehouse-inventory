@@ -32,19 +32,17 @@
         <p class="font-bold text-center">Kamu menyimpan {{last_entry.amount}} {{last_entry.name}} pada Warehouse!</p>
     </div>
     {% endif %}
-    <table class="table-fixed mb-8">
-        <tr>
-            <th class="border-2 py-3 px-2">Name</th>
-            <th class="border-2 py-3 px-2 w-36">Amount</th>
-            <th class="border-2 py-3 px-2 w-4/6">Description</th>
-        </tr>
+    <div class="grid-cols-3 grid gap-4 my-8">
         {% for item in items %}
-        <tr>
-            <td class="border-2 py-2 px-2">{{item.name}}</td>
-            <td class="border-2 py-2 px-2">{{item.amount}}</td>
-            <td class="border-2 py-2 px-2">{{item.description}}</td>
-        </tr>
+        <div class="h-80 bg-white border-2 border-gray-200 rounded-lg p-6">
+            <p class="flex text-xl justify-between font-bold">{{item.name}}
+                <span class="flex text-base">
+                    {{item.amount}}
+                </span>
+            </p>
+            <p class="pt-2">{{item.description}}</p>
+        </div>
         {% endfor %}
-    </table>
+    </ul>
 </div>
 {% endblock content %}

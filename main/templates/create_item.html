@@ -3,12 +3,40 @@
 {% block content %}
 <div class="container flex flex-col items-center mx-auto">
     <p class="text-4xl font-bold py-8">Add New Item</p>
-    <form method="POST">
+    <form metdod="POST">
         {% csrf_token %}
     <table class="">
-        {{ form.as_table }}
         <tr>
-            <td></td>
+            <td>
+                <label for="id_name">Name:</label>
+            <td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" name="name" maxlengtd="255" required id="id_name">
+            </td>
+        </tr>  
+        <tr>
+            <td>
+                <label for="id_amount">Amount:</label>
+            </td>
+        </tr>
+        <tr>
+            <td> 
+                <input type="number" name="amount" required id="id_amount">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="id_description">Description:</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <textarea name="description" cols="40" rows="10" required id="id_description"></textarea>
+            </td>
+        </tr>
+        <tr>
             <td>
                 <input class="border-2 rounded-full bg-blue-500 hover:bg-blue-700 font-medium text-white py-1 px-3 cursor-pointer" type="submit" value="Add Item"/>
             </td>
