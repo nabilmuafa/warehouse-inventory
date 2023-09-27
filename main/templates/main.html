@@ -5,17 +5,14 @@
     <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center gap-8">
             <p class="text-3xl text-blue-500 font-bold py-8">{{ app_name }}</p>
-            <a class="pt-1 hover:text-blue-500" href="{% url 'main:create_item' %}">
-                Add new item
-            </a>
         </div>
         <div class="flex items-center gap-4">
             <div class="flex flex-col items-end">
                 <p class=" -mb-1">Welcome, <span class="font-medium">{{name}}</span>!</p>
                 <p class="text-xs">{{class}}</p>
-                <p class="text-xs pt-2">Last login: {{last_login}}</p>
+                <p class="text-xs">Last login: {{last_login}}</p>
             </div>
-            <a class="hover:text-blue-500 pb-1" href="{% url 'main:logout' %}">
+            <a class="transition-color ease-in-out duration-100 hover:text-blue-500 pb-1" href="{% url 'main:logout' %}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                 </svg>
@@ -27,36 +24,44 @@
 
 {% block content %}
 <div class="container flex flex-col mx-auto">
-    {% if messages %}
-    <div>
-        {% for message in messages %}
-            <p class="font-bold text-center">{{ message }}</p>
-        {% endfor %}
+    <div class="flex items-center justify-between">
+        <div>
+            {% if messages %}
+            {% for message in messages %}
+                <p class="text-base font-medium text-center">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <a href="{% url 'main:create_item' %}">
+            <button class="bg-blue-500 hover:bg-blue-700 transition-color ease-in-out duration-100 text-white rounded-full py-3 px-10">Add new item</button>
+        </a>
     </div>
-    {% endif %}
     <div class="grid-cols-3 grid gap-4 my-8">
         {% for item in items %}
         <div class="h-80 bg-white border-2 border-gray-200 rounded-lg p-6">
-            <p class="flex text-xl justify-between font-bold">{{item.name}}
-                <a class="hover:text-red-500" href="delete/{{item.pk}}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>                      
-                </a>
-            </p>
-            <p class="flex items-center font-medium text-lg gap-3 py-4">
-                <a class="rounded-full hover:bg-gray-300" href="dec/{{item.pk}}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
-                    </svg>                                          
-                </a>
-                {{item.amount}}
-                <a class="rounded-full hover:bg-gray-300" href="inc/{{item.pk}}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                    </svg>                                                  
-                </a>
-            </p>
+            <div class="flex text-xl items-center justify-between font-bold pb-4">
+                <p class="text-2xl">{{item.name}}</p>
+                <div class="flex items-center font-medium text-lg gap-6">
+                    <div class="amount-modifier flex gap-3">
+                        <a class="rounded-full transition-color ease-in-out duration-100 hover:bg-gray-300" href="dec/{{item.pk}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                            </svg>                                          
+                        </a>
+                        <p>{{item.amount}}</p>
+                        <a class="rounded-full transition-color ease-in-out duration-100 hover:bg-gray-300" href="inc/{{item.pk}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                            </svg>                                                  
+                        </a>
+                    </div>
+                    <a class="transition-color ease-in-out duration-100 hover:text-red-500" href="delete/{{item.pk}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>                      
+                    </a>
+                </div>
+            </div>
             <p>{{item.description}}</p>
         </div>
         {% endfor %}
