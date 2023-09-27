@@ -15,6 +15,12 @@ Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/
   - [Perbedaan XML, JSON, dan HTML](#apa-perbedaan-utama-antara-xml-json-dan-html-dalam-konteks-pengiriman-data)
   - [Mengapa JSON lebih sering digunakan dalam pertukaran data?](#mengapa-json-sering-digunakan-dalam-pertukaran-data-antara-aplikasi-web-modern)
   - [Mengakses URL melalui Postman](#mengakses-url-melalui-postman)
+- [README.md Tugas 4](#tugas-4)
+  - [Implementasi Checklist Tugas 4](#implementasi-checklist-tugas-4)
+  - [Apa itu Django UserCreationForm](#apa-itu-django-usercreationform-dan-jelaskan-apa-kelebihan-dan-kekurangannya)
+  - [Perbedaan autentikasi dan otorisasi](#apa-perbedaan-antara-autentikasi-dan-otorisasi-dalam-konteks-django-dan-mengapa-keduanya-penting)
+  - [Apa itu cookies dalam konteks aplikasi web](#apa-itu-cookies-dalam-konteks-aplikasi-web-dan-bagaimana-django-menggunakan-cookies-untuk-mengelola-data-sesi-pengguna)
+  - [Apakah penggunaan cookies aman secara default](#apakah-penggunaan-cookies-aman-secara-default-dalam-pengembangan-web-atau-apakah-ada-risiko-potensial-yang-harus-diwaspadai)
 
 ## Tugas 2
 
@@ -781,3 +787,84 @@ Kemudian pada halaman utama, saya menambahkan bagian ini di dekat tombol logout,
 Sekarang cookie sudah dapat dilihat apabila user melakukan login.
 
 </details>
+<details>
+<summary>Membuat dua akun pengguna & 3 dummy data</summary>
+
+Saya membuat dua akun dengan username `nabilmuafa` dan `cicakbinkadal` _(matkul OS reference, saya sih bukan cbkadal)_. Untuk setiap akun, saya sudah menambahkan 3 data:
+![](https://media.discordapp.net/attachments/1133956580728127550/1156405550410641458/image.png?ex=6514da18&is=65138898&hm=09b4cfa968932b524a9f0a3f0d0477b491062da9516683ffb90879a52f243b04&=&width=1241&height=434)
+![](https://media.discordapp.net/attachments/1133956580728127550/1156405899884245082/image.png?ex=6514da6b&is=651388eb&hm=c7d61cee7612677e043930d8ca6ff9417667e8ea2fe266a92d9319f19e14f343&=&width=1241&height=392)
+
+</details>
+<details>
+<summary>Menghubungkan model Item dengan User</summary>
+
+Pada `models.py`, saya menambahkan bagian-bagian ini:
+
+```python
+from django.contrib.auth.models import User
+...
+class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ...
+```
+
+Saya menambahkan field `user` pada setiap model menggunakan `ForeignKey` sebagai relationship untuk meng-assign setiap objek dari model ke user yang membuat objeknya.
+
+Kemudian pada `views.py` tepatnya di fungsi `create_product`, saya memodifikasi cara penyimpanan objeknya sebagai berikut:
+
+```python
+def create_item(request):
+    form = ItemForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        item = form.save(commit=False)
+        item.user = request.user
+        item.save()
+        last_entry = Item.objects.latest('id')
+        messages.info(request, f"Kamu telah menyimpan {last_entry.name} sebanyak {last_entry.amount} di Warehouse Inventory!")
+        return HttpResponseRedirect(reverse('main:show_main'))
+    ...
+```
+
+Pada bagian ini, setiap `item` yang dibuat akan disimpan terlebih dahulu ke suatu variabel tanpa langsung "commit" atau disimpan ke database. Pada variabel tersebut, field user akan di-assign dengan user yang melakukan POST request. Barulah item akan disimpan ke database.
+
+Terdapat sedikit perubahan dari cara saya menampilkan pesan "telah menyimpan barang" dibanding pada tugas sebelumnya, yaitu sekarang saya menggunakan `messages.info()` untuk menambahkan pesan ke request. Ketika request redirect dari `create_item` didisplay ke halaman utama, maka pesan "telah menyimpan" tersebut akan muncul, tetapi akan hilang setelah di-refresh.
+
+Kemudian, saya memodifikasi fungsi `show_main`:
+
+```python
+def show_main(request):
+    items = Item.objects.filter(user=request.user)
+
+    context = {
+        'app_name': "Warehouse Inventory",
+        'name': request.user.username,
+        ...
+    }
+```
+
+Melalui kode ini, objek `Item` yang akan ditampilkan hanyalah punya user yang terautentikasi (dengan mem-filter objek-objek `Item` berdasarkan field user yang disesuaikan dengan user pada request). Field `name` pada `context` juga nilainya saya ubah menjadi nama user yang sedang terautentikasi pada request.
+
+Setelah perubahan ini, saya lakukan migrasi. Sama seperti di tutorial, muncul sebuah error yang meminta default value (saya tidak screenshot, tetapi messagenya sama persis). Saya masukkan 1 sebagai default value dan web app sudah berfungsi dengan selayaknya.
+
+</details>
+
+### Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?
+
+`UserCreationForm` adalah sebuah class dari Django yang dapat digunakan untuk membuat form registrasi user. Pada umumnya, `UserCreationForm` memiliki tiga field untuk diisi, yaitu `username`, `password1`, dan `password2` (untuk konfirmasi). Sebagai class milik Django, `UserCreationForm` memiliki kelebihan yaitu integrasinya terhadap database, sehingga kita tidak perlu membuat fungsionalitas registrasi dari awal dan secara manual menghubungkannya dengan database. Akan tetapi, `UserCreationForm` yang polos hanya memiliki 3 field secara default, sehingga apabila kita mau menambahkan field lain, ujung-ujungnya kita harus mendefinisikan class kita sendiri yang meng-inherit `UserCreationForm`. Singkatnya, `UserCreationForm` memiliki kelebihan yaitu integrasinya dengan database, serta kekurangan yaitu sedikitnya field-field yang tersedia by default.
+
+### Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?
+
+Autentikasi adalah proses memverifikasi identitas pengguna yang mencoba mengakses aplikasi Django (misalnya menggunakan username dan password), sementara otorisasi adalah proses memverifikasi dan mengendalikan konten apa saja yang bisa seorang pengguna akses sesuai dengan haknya setelah pengguna berhasil autentikasi (misalnya dengan membedakan user group). Keduanya saling melengkapi, autentikasi diperlukan agar kita bisa memastikan bahwa seseorang yang mengakses suatu akun memang "orang yang seharusnya", serta otorisasi diperlukan agar akses pengguna dapat dikendalikan dan pengguna tidak mengakses hal-hal yang tidak seharusnya mereka akses sesuai dengan haknya.
+
+### Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?
+
+Cookies adalah sebuah data kecil yang dikirim oleh server kepada browser kemudian disimpan pada client-side, untuk kemudian dikirim kembali ke server ketika browser melakukan request ke server. Cookies digunakan untuk mengelola data sesi dari setiap pengguna sebagai bentuk 'identifikasi' bahwa suatu permintaan datang dari pengguna siapa dalam sesi mana.
+
+Pada Django, ketika seorang user sudah terautentikasi, maka cookie dengan nama `sessionid` dan value yang terenkripsi akan terbentuk. Cookie tersebut mengidentifikasi sesi seorang pengguna sehingga server dapat mengetahui dari pengguna mana sebuah request datang. Ketika user tersebut logout, `sessionid` tersebut akan dihapus. Ketika user login lagi, `sessionid` akan berubah namun tetap dapat digunakan untuk mengidentifikasi sesi mana dan user siapa yang melakukan request.
+
+### Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?
+
+Dalam konteks Django, cookie yang dihasilkan sudah di-generate secara otomatis, sehingga seharusnya cenderung aman. Akan tetap, terdapat risiko yang harus diwaspadai apabila website dikembangkan tanpa framework. Apabila cookie yang menyimpan sesi seorang user tidak dienkripsi dengan baik, seorang pengguna bisa saja mengganti cookie-nya menjadi value dari sesi pengguna lain dengan mengenkripsi sebuah data, sehingga request dari pengguna tersebut seolah-olah datang dari pengguna lain yang bisa saja akunnya memiliki akses lebih tinggi.
+
+Sebagai contoh, misalkan ada cookie yang bernama `is_admin` dengan nilai `ZmFsc2U=` yang mengidentifikasi apakah seorang user merupakan admin. Bila diperhatikan, nilai `ZmFsc2U=` merupakan string yang terenkripsi dalam Base64, dan apabila di-decipher, artinya adalah `false`. Seorang user bisa saja mengenkripsi `true` ke Base64 menjadi `dHJ1ZQ==` kemudian mengubah nilai cookienya menjadi string tersebut. Dengan begitu, nilai asli cookie `is_admin` akan bernilai `true` dan user bisa mendapatkan akses admin.
