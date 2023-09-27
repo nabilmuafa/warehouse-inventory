@@ -558,3 +558,226 @@ JSON memiliki struktur yang jauh lebih simple, human-readable dan machine-readab
 #### GET /xml/1 (XML)
 
 ![](https://media.discordapp.net/attachments/1133956580728127550/1153757302176878603/image.png?width=954&height=595)
+
+## Tugas 4
+
+### Implementasi Checklist Tugas 4
+
+<details>
+<summary>Mengimplementasikan fungsi registrasi, login, dan logout</summary>
+
+Untuk fungsi registrasi, saya menambahkan fungsi ini di `views.py`:
+
+```python
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+...
+def register(request):
+    form = UserCreationForm()
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {"form": form}
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('main:show_main'))
+    else:
+        return render(request, "register.html", context)
+```
+
+Fungsi ini membuat halaman form register. Apabila method request user adalah POST, form akan diperiksa validitasnya, kemudian jika valid data yang diinput akan disimpan ke database (sebagai user baru). Page akan redirect ke login.
+
+Saya menambahkan logic baru di bagian bawah, dimana apabila user sedang terautentikasi dengan suatu akun, mereka akan ter-redirect ke main apabila mereka ingin mengakses halaman register. Jika tidak, halaman `register.html` akan dirender dengan form.
+
+Karena file terlalu panjang, implementasi `register.html` yang berada di directory `main/templates` dapat dilihat pada [file ini](/warehouse-inventory/main/templates/register.html). Pada tutorial, form diubah menjadi tabel dengan `form.as_table`. Akan tetapi, saya menjabarkan form tersebut dengan cara meng-copy source code dari form yang sudah dibentuk menjadi tabel sehingga tiap-tiap elemennya bisa diberikan styling. Saya menggunakan Tailwind CSS untuk styling.
+
+Saya juga memberikan fungsionalitas menampilkan pesan error pada bagian berikut di `register.html`:
+
+```html
+{% if form.errors %}
+<tr>
+  <td>
+    <ul class="pt-2">
+      {% for _,error in form.errors.items %}
+      <li class="text-red-500 text-sm text-center">{{ error }}</li>
+      {% endfor %}
+      <li class="text-red-500 text-sm text-center">Please try again.</li>
+    </ul>
+  </td>
+</tr>
+{% endif %}
+```
+
+Bagian ini akan menampilkan pesan error saat register apabila response dari form juga membawa error.
+
+Untuk fungsi login, saya menambahkan fungsi ini di `views.py`:
+
+```python
+from django.contrib.auth import authenticate, login, logout
+...
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            response = HttpResponseRedirect(reverse('main:show_main'))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+        else:
+            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('main:show_main'))
+    else:
+        return render(request, "login.html", context)
+```
+
+Fungsi ini membuat halaman login. Apabila request method dari user adalah POST, maka username dan password yang diinput oleh user akan diambil dari request untuk kemudian di authenticate. Apabila authentication berhasil, instance akun user akan diambil dari database kemudian dilakukan login. User akan di-redirect ke halaman utama dengan cookie yang di-set ke waktu terakhir login. Apabila authentication gagal, akan ada pesan username/password salah.
+
+Sama seperti register, saya mengimplementasikan logic baru pada akhir kode, dimana user tidak bisa mengakses halaman login apabila dalam keadaan authenticated. User akan di redirect ke main. Jika user tidak authenticated, halaman `login.html` akan dirender.
+
+Karena file terlalu panjang, implementasi `login.html` yang berada di directory `main/templates` dapat dilihat pada [file ini](/warehouse-inventory/main/templates/login.html). Saya menggunakan Tailwind CSS untuk memberikan styling pada halaman ini. Sama seperti halaman register, saya menambahkan fungsionalitas menampilkan pesan error:
+
+```html
+{% if messages %}
+<tr>
+  {% for message in messages %}
+  <td class="text-red-500 text-center pt-2">{{ message }}</td>
+  {% endfor %}
+</tr>
+{% endif %}
+```
+
+Apabila terdapat `messages` di request, maka akan ditampilkan di halaman ini, baik sebagai pesan error maupun pesan sukses membuat akun.
+
+Pada halaman login, saya menambahkan tombol untuk ke halaman register apabila user belum memiliki akun, begitupun sebaliknya pada halaman register.
+
+Untuk fungsi logout, saya menambahkan fungsi ini di `views.py`:
+
+```python
+from django.contrib.auth import authenticate, login, logout
+...
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+
+Fungsi ini akan memanggil fungsi logout dari Django untuk melakukan logout pada user. Setelah logout, user akan di-redirect ke halaman login, dan cookie dari user akan dihapus.
+
+Pada `main.html`, saya memberikan tombol logout dengan icon "keluar pintu" yang menandakan logout di sebelah kanan atas halaman. Implementasinya seperti ini:
+
+```html
+...
+<a class="hover:text-blue-500 pb-1" href="{% url 'main:logout' %}">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    stroke="currentColor"
+    class="w-6 h-6"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+    />
+  </svg>
+</a>
+```
+
+Saya menggunakan SVG yang saya temukan online untuk menampilkan icon. Tombol ini berada di block header yang juga saya fungsikan sebagai navigation bar.
+
+Setelah membuat tiap fungsi dan halaman tersebut, saya menambahkan pathnya ke `urls.py`:
+
+```python
+from django.urls import path
+from main.views import ..., register, login_user, logout_user, ...
+
+urlpatterns = [
+  ...
+  path('register/', register, name="register"),
+  path('login/', login_user, name="login"),
+  path('logout/', logout_user, name="logout"),
+  ...
+]
+```
+
+Setiap halaman sekarang sudah bisa diakses dan sistem autentikasi sudah selesai. Sebagai tambahan, saya menambahkan bagian kode ini pada `views.py` untuk merestriksi akses user ke halaman utama (harus logged in):
+
+```python
+from django.contrib.auth.decorators import login_required
+...
+@login_required(login_url='/login')
+def show_main(request):
+  ...
+```
+
+Apabila user belum terautentikasi, maka user akan di-redirect ke page login jika mencoba untuk mengakses halaman utama.
+
+</details>
+<details>
+<summary>Menampilkan detail informasi pengguna yang sedang logged in, menerapkan cookies</summary>
+
+Pada fungsi `login_user` di `views.py` tadi, saya memiliki bagian berikut:
+
+```python
+import datetime
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
+...
+def login_user(request):
+    ...
+    if user is not None:
+        login(request, user)
+        response = HttpResponseRedirect(reverse('main:show_main'))
+        response.set_cookie('last_login', str(datetime.datetime.now()))
+        return response
+```
+
+Pada bagian ini, apabila user berhasil login (akunnya sudah terautentikasi), maka akan ditambahkan cookie pada response yang valuenya berupa waktu kapan user terakhir kali login.
+
+Pada fungsi `show_main` di `views.py`, saya menambahkan baris ini pada `context`:
+
+```python
+context = {
+    ...
+    'last_login': request.COOKIES['last_login'],
+    }
+```
+
+Baris ini akan mengambil nilai cookie yang memiliki nama `last_login` lalu memberikannya kepada response yang akan ditampilkan pada halaman utama.
+
+Pada fungsi `logout()` di `views.py` tadi, saya juga memiliki bagian ini:
+
+```python
+from django.contrib.auth import authenticate, login, logout
+...
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+
+Apabila user logout, maka cookie dari user yang terkait akan dihapus dari response.
+
+Kemudian pada halaman utama, saya menambahkan bagian ini di dekat tombol logout, untuk menampilkan cookies berupa kapan terakhir user login:
+
+```html
+<div class="flex flex-col items-end">
+  ...
+  <p class="text-xs pt-2">Last login: {{last_login}}</p>
+</div>
+```
+
+Sekarang cookie sudah dapat dilihat apabila user melakukan login.
+
+</details>
