@@ -848,6 +848,118 @@ Melalui kode ini, objek `Item` yang akan ditampilkan hanyalah punya user yang te
 Setelah perubahan ini, saya lakukan migrasi. Sama seperti di tutorial, muncul sebuah error yang meminta default value (saya tidak screenshot, tetapi messagenya sama persis). Saya masukkan 1 sebagai default value dan web app sudah berfungsi dengan selayaknya.
 
 </details>
+<details>
+<summary>Bonus</summary>
+
+Untuk mengimplementasikan tombol menambahkan dan mengurangi amount, saya membuat dua fungsi baru di `views.py`:
+
+```python
+def decrement(request, id):
+    item = Item.objects.get(pk=id)
+    if item.amount == 1:
+        messages.info(request, "Jumlah item tidak boleh kurang dari 1!")
+    else:
+        item.amount -= 1
+        item.save(update_fields=["amount"])
+    return HttpResponseRedirect(reverse("main:show_main"))
+
+def increment(request, id):
+    item = Item.objects.get(pk=id)
+    item.amount += 1
+    item.save(update_fields=["amount"])
+    return HttpResponseRedirect(reverse("main:show_main"))
+```
+
+Intinya, setiap fungsi akan mengambil objek sesuai id yang direquest, kemudian menambahkan atau mengurangi amountnya sesuai dengan fungsi yang digunakan. Pada fungsi `decrement`, ada logic yang membatasi bahwa setiap item jumlahnya tidak boleh kurang dari 1, sehingga jika user tetap memaksa menguranginya, akan dimunculkan pesan error dan jumlah tidak akan berkurang.
+
+Pada `views.py`, saya juga membuat fungsi untuk menghapus sebuah item:
+
+```python
+def delete(request, id):
+    Item.objects.filter(pk=id).delete()
+    return HttpResponseRedirect(reverse("main:show_main"))
+```
+
+Fungsi ini akan mengambil item sesuai id yang direquest kemudian menghapusnya dari database.
+
+Setelah membuat fungsi-fungsi ini, saya melakukan routing pada `urls.py` agar fungsi-fungsi ini dapat diakses:
+
+```python
+from django.urls import path
+from main.views import ..., decrement, increment, delete
+
+urlpatterns = [
+  ...
+  path('dec/<int:id>/', decrement, name="dec"),
+  path('inc/<int:id>/', increment, name="inc"),
+  path('delete/<int:id>/', delete, name="delete"),
+  ...
+]
+```
+
+Kemudian saya menambahkan tombol-tombolnya pada `main.html` (pada for loop dalam iterasi setiap objek barang):
+
+```html
+<div class="h-80 bg-white border-2 border-gray-200 rounded-lg p-6">
+  <p class="flex text-xl justify-between font-bold">
+    {{item.name}}
+    <a class="hover:text-red-500" href="delete/{{item.pk}}">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+        />
+      </svg>
+    </a>
+  </p>
+  <p class="flex items-center font-medium text-lg gap-3 py-4">
+    <a class="rounded-full hover:bg-gray-300" href="dec/{{item.pk}}">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+      </svg>
+    </a>
+    {{item.amount}}
+    <a class="rounded-full hover:bg-gray-300" href="inc/{{item.pk}}">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6v12m6-6H6"
+        />
+      </svg>
+    </a>
+  </p>
+  <p>{{item.description}}</p>
+</div>
+```
+
+Menggunakan icon SVG yang dapat saya temukan online, kira-kira penampilannya seperti ini:
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1156433014537076786/image.png?ex=6514f3ac&is=6513a22c&hm=1cbeabb8b8c9290cde5faa9f04f9e0ae6e186e13a05c92526c3fb845996427ae&=)
+
+</details>
 
 ### Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?
 
