@@ -598,7 +598,7 @@ Fungsi ini membuat halaman form register. Apabila method request user adalah POS
 
 Saya menambahkan logic baru di bagian bawah, dimana apabila user sedang terautentikasi dengan suatu akun, mereka akan ter-redirect ke main apabila mereka ingin mengakses halaman register. Jika tidak, halaman `register.html` akan dirender dengan form.
 
-Karena file terlalu panjang, implementasi `register.html` yang berada di directory `main/templates` dapat dilihat pada [file ini](/warehouse-inventory/main/templates/register.html). Pada tutorial, form diubah menjadi tabel dengan `form.as_table`. Akan tetapi, saya menjabarkan form tersebut dengan cara meng-copy source code dari form yang sudah dibentuk menjadi tabel sehingga tiap-tiap elemennya bisa diberikan styling. Saya menggunakan Tailwind CSS untuk styling.
+Karena file terlalu panjang, implementasi `register.html` yang berada di directory `main/templates` dapat dilihat pada [file ini](/main/templates/register.html). Pada tutorial, form diubah menjadi tabel dengan `form.as_table`. Akan tetapi, saya menjabarkan form tersebut dengan cara meng-copy source code dari form yang sudah dibentuk menjadi tabel sehingga tiap-tiap elemennya bisa diberikan styling. Saya menggunakan Tailwind CSS untuk styling.
 
 Saya juga memberikan fungsionalitas menampilkan pesan error pada bagian berikut di `register.html`:
 
@@ -647,7 +647,7 @@ Fungsi ini membuat halaman login. Apabila request method dari user adalah POST, 
 
 Sama seperti register, saya mengimplementasikan logic baru pada akhir kode, dimana user tidak bisa mengakses halaman login apabila dalam keadaan authenticated. User akan di redirect ke main. Jika user tidak authenticated, halaman `login.html` akan dirender.
 
-Karena file terlalu panjang, implementasi `login.html` yang berada di directory `main/templates` dapat dilihat pada [file ini](/warehouse-inventory/main/templates/login.html). Saya menggunakan Tailwind CSS untuk memberikan styling pada halaman ini. Sama seperti halaman register, saya menambahkan fungsionalitas menampilkan pesan error:
+Karena file terlalu panjang, implementasi `login.html` yang berada di directory `main/templates` dapat dilihat pada [file ini](/main/templates/login.html). Saya menggunakan Tailwind CSS untuk memberikan styling pada halaman ini. Sama seperti halaman register, saya menambahkan fungsionalitas menampilkan pesan error:
 
 ```html
 {% if messages %}
