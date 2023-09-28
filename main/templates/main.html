@@ -2,29 +2,50 @@
 
 {% block header %}
 <header>
-    <nav class="header bg-white mb-8">
-        <div class="container mx-auto flex justify-between items-center py-6">
-            <a href="/" class="text-3xl text-blue-500 font-bold">{{ app_name }}</a>
-            <div class="flex items-center gap-4">
+    <nav class="header bg-white border-b">
+        <div class="container mx-auto flex justify-between items-center md:py-6 py-3 px-4 md:px-0">
+            <a href="/" class="leading-tight text-xl md:text-3xl text-blue-500 font-bold">
+                <p>Warehouse<span class="hidden md:inline"> </span><br class="md:hidden">Inventory</p>
+            </a>
+            <div class="flex items-center md:gap-4 gap-2">
                 <div class="flex flex-col items-end">
-                    <p class=" -mb-1">Welcome, <span class="font-medium">{{name}}</span>!</p>
+                    <p class=" -mb-1">
+                        <span class="hidden md:inline">Welcome, </span>
+                        <span class="text-sm md:text-base font-medium">{{name}}</span>
+                        <span class="hidden md:inline">!</span>
+                    </p>
                     <p class="text-xs">{{class}}</p>
-                    <p class="text-xs">Last login: {{last_login}}</p>
+                    <p class="hidden md:block text-xs">Last login: {{last_login}}</p>
                 </div>
-                <a class="transition-color ease-in-out duration-100 hover:text-blue-500 pb-1" href="{% url 'main:logout' %}">
+                <a class="hidden md:block transition-color ease-in-out duration-100 hover:text-blue-500 pb-1" href="{% url 'main:logout' %}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                     </svg>
                 </a>
+                <div id="user-dropdown" class="md:hidden relative float-right pt-2">
+                    <button onClick="showDropdown()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>                      
+                    </button>
+                    <ul id="dropdown-content" class="md:hidden hidden absolute right-0 rounded-lg z-1 shadow-md bg-white">
+                        <li>
+                            <a class="block whitespace-no-wrap w-40 border-b text-sm py-3 px-4" href="/create-item">Add new item</a>
+                        </li>
+                        <li>
+                            <a class="block whitespace-no-wrap w-40 text-sm py-3 px-4" href="/logout">Log out</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </div>         
     </nav>
 </header>
 {% endblock header %}
 
 {% block content %}
 <div class="container flex flex-col mx-auto">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between md:mt-8">
         <div>
             {% if messages %}
             {% for message in messages %}
@@ -32,17 +53,17 @@
             {% endfor %}
             {% endif %}
         </div>
-        <a href="{% url 'main:create_item' %}">
+        <a class="hidden md:block" href="{% url 'main:create_item' %}">
             <button class="bg-blue-500 hover:bg-blue-700 transition-color ease-in-out duration-100 text-white rounded-full py-3 px-10">Add new item</button>
         </a>
     </div>
-    <div class="grid-cols-3 grid gap-4 my-8">
+    <div class="grid-cols-2 md:grid-cols-3 grid gap-2 md:gap-4 md:mt-8 mt-2 px-2 md:px-0">
         {% for item in items %}
-        <div class="h-80 bg-white border-2 border-gray-200 rounded-lg p-6">
-            <div class="flex text-xl justify-between font-bold pb-4">
-                <p class="text-2xl">{{item.name}}</p>
+        <div class="h-72 md:h-80 bg-white border-2 border-gray-200 rounded-lg p-6">
+            <div class="flex flex-wrap text-xl justify-between font-bold md:pb-4">
+                <p class="text-xl md:text-2xl">{{item.name}}</p>
                 <div class="flex font-medium items-center text-lg gap-6">
-                    <div class="amount-modifier flex items-center gap-3">
+                    <div class="hidden md:flex amount-modifier flex items-center gap-3">
                         <a class="rounded-full transition-color ease-in-out duration-100 hover:bg-gray-300" href="dec/{{item.pk}}">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
@@ -62,7 +83,20 @@
                     </a>
                 </div>
             </div>
-            <p>{{item.description}}</p>
+            <div class="flex md:hidden amount-modifier items-center justify-center gap-3 py-2">
+                <a class="rounded-full transition-color ease-in-out duration-100 hover:bg-gray-300" href="dec/{{item.pk}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                    </svg>                                          
+                </a>
+                <p>{{item.amount}}</p>
+                <a class="rounded-full transition-color ease-in-out duration-100 hover:bg-gray-300" href="inc/{{item.pk}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                    </svg>                                                  
+                </a>
+            </div>
+            <p class="text-sm md:text-base">{{item.description}}</p>
         </div>
         {% endfor %}
     </div>
