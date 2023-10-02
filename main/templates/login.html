@@ -13,31 +13,31 @@
 {% block content %}
 
 <div class="login container flex flex-col items-center mx-auto">
-    <div class="bg-white rounded-lg shadow-2xl px-8 pt-8 pb-6 mb-8 md:max-w-xl max-w-sm">
+    <div class="bg-white rounded-lg shadow-2xl md:px-8 px-6 pt-8 pb-6 mb-8 md:max-w-xl max-w-sm">
         <form method="POST" action="">
             {% csrf_token %}
             <table class="table-fixed w-full">
                 <tr>
-                    <td class="text-gray-700 font-medium">Username</td>
+                    <td class="text-gray-700 font-medium text-sm md:text-base">Username</td>
                 </tr>
                 <tr>
-                    <td class="py-2"><input type="text" name="username" placeholder="Username" class="form-control bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></td>
+                    <td class="py-2"><input type="text" name="username" placeholder="Username" class="form-control text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></td>
                 </tr>
                 <tr>
-                    <td class="pt-6 text-gray-700 font-medium">Password</td>
+                    <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">Password</td>
                 </tr>
                 <tr>
-                    <td class="py-2"><input type="password" name="password" placeholder="Password" class="form-control bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></td>
+                    <td class="py-2"><input type="password" name="password" placeholder="Password" class="form-control text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></td>
                 </tr>            
                 <tr>
-                    <td class="pt-10 pb-4 flex justify-center">
-                        <input class="btn login_btn transition-color ease-in-out duration-100 bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-full px-36 py-3 cursor-pointer" type="submit" value="Login">
+                    <td class="pt-10 pb-4 flex justify-center text-sm md:text-base">
+                        <input class="btn login_btn transition-color ease-in-out duration-100 bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-full md:px-36 px-24 py-3 cursor-pointer" type="submit" value="Login">
                     </td>
                 </tr>
                 {% if messages %}
                 <tr>
                     {% for message in messages %}
-                    <td class="text-red-500 text-center pt-2">{{ message }}</td>
+                    <td class="text-red-500 text-center pt-2 md:text-sm text-xs md:text-base">{{ message }}</td>
                     {% endfor %}
                 </tr>
                 {% endif %} 
@@ -45,7 +45,7 @@
         </form>
     </div>    
         
-    <p class="text-center">Don't have an account yet?<br><a class="text-blue-500 hover:text-blue-700" href="{% url 'main:register' %}">Register Now</a></p>
+    <p class="text-center text-sm md:text-base">Don't have an account yet?<br><a class="text-blue-500 hover:text-blue-700 text-sm md:text-base" href="{% url 'main:register' %}">Register Now</a></p>
 
 </div>
 

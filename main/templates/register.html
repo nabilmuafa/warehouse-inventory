@@ -12,32 +12,32 @@
 
 {% block content %}  
 
-<div class="login container flex flex-col items-center mx-auto">
-    <div class="bg-white rounded-lg shadow-2xl px-8 py-6 mb-8 md:max-w-xl max-w-sm">
-        <h1 class="text-3xl font-bold text-slate-700 pb-6">Register</h1>  
+<div class="login container flex flex-col items-center mx-auto pb-12">
+    <div class="bg-white rounded-lg shadow-2xl md:px-8 px-6 py-6 mb-8 md:max-w-xl max-w-sm">
+        <h1 class="md:text-3xl text-xl font-bold text-slate-700 pb-6">Register</h1>  
         <form method="POST" >  
             {% csrf_token %}  
             <table class="table-fixed w-full">  
                 <tr>
-                    <td class="text-gray-700 font-medium">
+                    <td class="text-gray-700 font-medium text-sm md:text-base">
                         <label for="id_username">Username:</label>
                     </td>
                 </tr>
                 <tr>
-                    <td class="py-2">
-                      <input class="bg-gray-100 py-3 px-4 border-2 w-full focus:shadow-lg" type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id="id_username">
+                    <td>
+                      <input class="bg-gray-100 text-sm md:text-base py-3 px-4 border-2 w-full focus:shadow-lg" type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id="id_username">
                         <br>
                         <span class="helptext text-xs">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</span>
                     </td>
                 </tr>
                 <tr>
-                    <td class="pt-6 text-gray-700 font-medium">
+                    <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">
                         <label for="id_password1">Password:</label>
                     </td>
                 </tr>
                 <tr>
                     <td> 
-                        <input class="bg-gray-100 py-3 px-4 border-2 w-full focus:shadow-lg" type="password" name="password1" autocomplete="new-password" required id="id_password1">
+                        <input class="bg-gray-100 text-sm md:text-base py-3 px-4 border-2 w-full focus:shadow-lg" type="password" name="password1" autocomplete="new-password" required id="id_password1">
                         <br>
                         <span class="helptext text-xs">
                             <ul class="list-disc pl-6 pt-1">
@@ -50,21 +50,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="pt-6 text-gray-700 font-medium">
+                    <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">
                         <label for="id_password2">Password confirmation:</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input class="bg-gray-100 py-3 px-4 border-2 w-full focus:shadow-lg" type="password" name="password2" autocomplete="new-password" required id="id_password2">
+                        <input class="bg-gray-100 text-sm md:text-base py-3 px-4 border-2 w-full focus:shadow-lg" type="password" name="password2" autocomplete="new-password" required id="id_password2">
                         
                         <br>
                         <span class="helptext text-xs">Enter the same password as before, for verification.</span>
                     </td>
                 </tr>  
                 <tr>  
-                    <td class="pt-10 pb-4 flex justify-center">
-                        <input class="btn login_btn transition-color ease-in-out duration-100 bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-full px-36 py-3 cursor-pointer" type="submit" name="submit" value="Register"/>
+                    <td class="pt-10 pb-4 flex justify-center text-sm md:text-base">
+                        <input class="btn login_btn transition-color ease-in-out duration-100 bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-full md:px-36 px-24 py-3 cursor-pointer" type="submit" name="submit" value="Register"/>
                     </td>  
                 </tr>
                 {% if form.errors %}
@@ -72,9 +72,9 @@
                     <td>
                         <ul class="pt-2">
                             {% for _,error in form.errors.items %} 
-                            <li class="text-red-500 text-sm text-center">{{ error }}</li>
+                            <li class="text-red-500 text-xs text-center">{{ error }}</li>
                             {% endfor %}
-                            <li class="text-red-500 text-sm text-center">Please try again.</li>
+                            <li class="text-red-500 text-xs text-center">Please try again.</li>
                         </ul>
                     </td>
                 </tr>
@@ -83,7 +83,7 @@
         </form>
     </div>
 
-    <p class="text-center">Already have an account?<br><a class="text-blue-500 hover:text-blue-700" href="{% url 'main:login' %}">Login</a></p>
+    <p class="text-center text-sm md:text-base">Already have an account?<br><a class="text-blue-500 hover:text-blue-700" href="{% url 'main:login' %}">Login</a></p>
         
 </div>  
 
