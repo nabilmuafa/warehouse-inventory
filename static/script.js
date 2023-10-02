@@ -6,4 +6,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
       dropdownContent.classList.toggle("hidden");
     });
   }
+  if (dropdownContent) {
+    dropdownContent.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+  }
 });
