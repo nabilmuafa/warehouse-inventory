@@ -1,48 +1,54 @@
 {% extends 'base.html' %} 
 
+{% block header %}
+
+{% endblock header %}
+
 {% block content %}
-<div class="container flex flex-col items-center mx-auto">
-    <p class="text-4xl font-bold py-8">Add New Item</p>
-    <form method="POST">
-        {% csrf_token %}
-    <table class="">
-        <tr>
-            <td>
-                <label for="id_name">Name:</label>
-            <td>
-        </tr>
-        <tr>
-            <td>
-                <input type="text" name="name" maxlengtd="255" required id="id_name">
-            </td>
-        </tr>  
-        <tr>
-            <td>
-                <label for="id_amount">Amount:</label>
-            </td>
-        </tr>
-        <tr>
-            <td> 
-                <input type="number" name="amount" required id="id_amount">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label for="id_description">Description:</label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <textarea name="description" cols="40" rows="10" required id="id_description"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input class="border-2 rounded-full bg-blue-500 hover:bg-blue-700 font-medium text-white py-1 px-3 cursor-pointer" type="submit" value="Add Item"/>
-            </td>
-        </tr>
-    </table>
-</form>
+<div class="container flex flex-col items-center mx-auto pt-10 pb-12">
+    <div class="bg-white rounded-lg shadow-2xl md:px-8 px-6 pt-8 pb-6 mb-8 md:max-w-xl max-w-sm">
+        <p class="md:text-3xl text-xl font-bold text-slate-700 pb-6">Add New Item</p>
+        <form method="POST">
+            {% csrf_token %}
+            <table class="table-fixed w-full">
+                <tr>
+                    <td class="text-gray-700 font-medium text-sm md:text-base">
+                        <label for="id_name">Name:</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="py-2">
+                        <input type="text" name="name" maxlength="255" required id="id_name" class="form-control text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg">
+                    </td>
+                </tr>  
+                <tr>
+                    <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">
+                        <label for="id_amount">Amount:</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="py-2"> 
+                        <input type="number" name="amount" required id="id_amount" class="form-control text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">
+                        <label for="id_description">Description:</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="py-2">
+                    <textarea name="description" cols="40" rows="10" required id="id_description" class="text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pt-10 pb-4 flex justify-center text-sm md:text-base">
+                        <input class="btn login_btn transition-color ease-in-out duration-100 bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-full md:px-36 px-24 py-3 cursor-pointer" type="submit" value="Add Item"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 </div>
 
-{% endblock %}
+{% endblock content %}
