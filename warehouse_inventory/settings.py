@@ -116,9 +116,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 STATIC_URL = 'static/'
 
@@ -127,4 +127,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://93b8-110-50-85-3.ngrok-free.app']
+# CSRF_TRUSTED_ORIGINS = []
