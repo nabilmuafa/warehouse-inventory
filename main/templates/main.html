@@ -7,6 +7,14 @@
             <a href="/" class="leading-tight text-xl md:text-3xl text-blue-500 font-bold">
                 <p>Warehouse<span class="hidden md:inline"> </span><br class="md:hidden">Inventory</p>
             </a>
+            <div>
+                <a class="flex items-center gap-1" href="/create-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="pt-0.5 text-sm">Add</p>                      
+                </a>
+            </div>
             <div class="flex items-center md:gap-4 gap-2">
                 <div class="flex flex-col items-end">
                     <p class=" -mb-1">
@@ -29,9 +37,6 @@
                         </svg>                      
                     </button>
                     <ul id="dropdown-content" class="md:hidden hidden absolute right-0 rounded-lg z-1 shadow-md bg-white">
-                        <li class="hover:bg-gray-100 rounded-t-lg">
-                            <a class="block whitespace-no-wrap w-40 border-b text-sm py-3 px-4" href="/create-item">Add new item</a>
-                        </li>
                         <li class="hover:bg-gray-100 rounded-b-lg">
                             <a class="block whitespace-no-wrap w-40 text-sm py-3 px-4" href="/logout">Log out</a>
                         </li>
@@ -45,11 +50,11 @@
 
 {% block content %}
 <div class="container flex flex-col mx-auto">
-    <div class="flex items-center justify-between md:mt-8">
+    <div class="flex items-center md:justify-between justify-center mt-2 md:mt-8">
         <div>
             {% if messages %}
             {% for message in messages %}
-                <p class="text-base font-medium text-center">{{ message }}</p>
+                <p class="text-sm md:text-base font-medium text-center">{{ message }}</p>
             {% endfor %}
             {% endif %}
         </div>
