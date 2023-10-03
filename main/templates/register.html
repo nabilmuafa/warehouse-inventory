@@ -12,10 +12,10 @@
 
 {% block content %}  
 
-<div class="login container flex flex-col items-center mx-auto pb-12">
+<div class="container flex flex-col items-center mx-auto pb-12">
     <div class="bg-white rounded-lg shadow-2xl md:px-8 px-6 py-6 mb-8 md:max-w-xl max-w-sm">
         <h1 class="md:text-3xl text-xl font-bold text-slate-700 pb-6">Register</h1>  
-        <form method="POST" >  
+        <form method="POST">  
             {% csrf_token %}  
             <table class="table-fixed w-full">  
                 <tr>
