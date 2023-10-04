@@ -1,4 +1,4 @@
-# [Warehouse Inventory](https://warehouse-inventory.adaptable.app)
+# Warehouse Inventory
 
 Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/2024. Dibuat oleh Muhammad Nabil Mu'afa - 2206024972
 
@@ -224,7 +224,7 @@ Setelah itu, seperti tutorial pertama, saya melakukan deploy di Adaptable. Saya 
 python manage.py migrate && gunicorn warehouse_inventory.wsgi
 ```
 
-Setelah menunggu sekitar 5 menit, aplikasi saya sudah terdeploy dan bisa dilihat pada [website ini](https://warehouse-inventory.adaptable.app).
+Setelah menunggu sekitar 5 menit, aplikasi saya sudah terdeploy dan bisa dilihat pada ~~[website ini](https://warehouse-inventory.adaptable.app)~~.
 
 </details>
 
