@@ -21,6 +21,12 @@ Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/
   - [Perbedaan autentikasi dan otorisasi](#apa-perbedaan-antara-autentikasi-dan-otorisasi-dalam-konteks-django-dan-mengapa-keduanya-penting)
   - [Apa itu cookies dalam konteks aplikasi web](#apa-itu-cookies-dalam-konteks-aplikasi-web-dan-bagaimana-django-menggunakan-cookies-untuk-mengelola-data-sesi-pengguna)
   - [Apakah penggunaan cookies aman secara default](#apakah-penggunaan-cookies-aman-secara-default-dalam-pengembangan-web-atau-apakah-ada-risiko-potensial-yang-harus-diwaspadai)
+- [README.md Tugas 5](#tugas-5)
+  - [Implementasi Checklist Tugas 5](#implementasi-checklist-tugas-5)
+  - [Manfaat dari tiap element selector dan kapan waktu yang tepat untuk menggunakannya](#manfaat-dari-tiap-element-selector)
+  - [HTML5 Tag yang saya ketahui](#jelaskan-html5-tag-yang-kamu-ketahui)
+  - [Perbedaan antara Margin dan Padding](#jelaskan-perbedaan-antara-margin-dan-padding)
+  - [Perbedaan antara framework Tailwind dan Bootstrap](#jelaskan-perbedaan-antara-framework-css-tailwind-dan-bootstrap)
 
 ## Tugas 2
 
@@ -980,3 +986,118 @@ Pada Django, ketika seorang user sudah terautentikasi, maka cookie dengan nama `
 Dalam konteks Django, cookie yang dihasilkan sudah di-generate secara otomatis, sehingga seharusnya cenderung aman. Akan tetap, terdapat risiko yang harus diwaspadai apabila website dikembangkan tanpa framework. Apabila cookie yang menyimpan sesi seorang user tidak dienkripsi dengan baik, seorang pengguna bisa saja mengganti cookie-nya menjadi value dari sesi pengguna lain dengan mengenkripsi sebuah data, sehingga request dari pengguna tersebut seolah-olah datang dari pengguna lain yang bisa saja akunnya memiliki akses lebih tinggi.
 
 Sebagai contoh, misalkan ada cookie yang bernama `is_admin` dengan nilai `ZmFsc2U=` yang mengidentifikasi apakah seorang user merupakan admin. Bila diperhatikan, nilai `ZmFsc2U=` merupakan string yang terenkripsi dalam Base64, dan apabila di-decipher, artinya adalah `false`. Seorang user bisa saja mengenkripsi `true` ke Base64 menjadi `dHJ1ZQ==` kemudian mengubah nilai cookienya menjadi string tersebut. Dengan begitu, nilai asli cookie `is_admin` akan bernilai `true` dan user bisa mendapatkan akses admin.
+
+## Tugas 5
+
+### Implementasi Checklist Tugas 5
+
+<details>
+<summary>Kustomisasi halaman login, register, dan tambah inventori</summary>
+
+Dalam melakukan kustomisasi, saya menggunakan Tailwind CSS.
+Berikut source code dari halaman login: [login.html](/main/templates/login.html)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1158951033750433862/image.png?ex=651e1cc2&is=651ccb42&hm=59f19ec5184586a345efe1e85d44bc0c8db4d14fa42335483b490b9d4b5870a8&=&width=1179&height=566)
+![](https://media.discordapp.net/attachments/1133956580728127550/1158951146132615178/image.png?ex=651e1cdd&is=651ccb5d&hm=0dafc33598e4d7e68c3f26d6dbc6a043eb1b5e50b56ef0038d191e8250c01f68&=&width=254&height=566)
+
+Berikut source code dari halaman register: [register.html](/main/templates/register.html)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1158951275891806329/image.png?ex=651e1cfc&is=651ccb7c&hm=ac9681baa24bd91cb0d84bd59fb13e62ae469b0c7d2583b6f2d73efdd1e1c23e&=&width=1183&height=566)
+![](https://media.discordapp.net/attachments/1133956580728127550/1158952054631452773/image.png?ex=651e1db6&is=651ccc36&hm=1a3581e21cd852f789ed89748edd2b0ab516e78f87d12fc50a240b101df60a6c&=&width=251&height=565)
+
+Berikut source code dari halaman tambah inventori: [create_item.html](/main/templates/create_item.html)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1158953173772402768/image.png?ex=651e1ec0&is=651ccd40&hm=9df8a74d8c607970016c72969ec00e140c50b2820b907ef781f79307b1760a87&=&width=1179&height=566)
+![](https://media.discordapp.net/attachments/1133956580728127550/1158953307927216308/image.png?ex=651e1ee0&is=651ccd60&hm=49a9af55456f5fccf5c401e5970dc5ca7886e5ef000e4a175d5b4bdd213278a0&=&width=257&height=566)
+
+- Setiap label dan input box saya pisah menjadi setiap baris tabel. Seisi tabel tersebut diletakkan dalam satu card besar yang didalamnya diberikan padding.
+- Untuk halaman yang menggunakan `{{form.as_table}}`, saya memecah tabel tersebut untuk bisa di-styling tiap bagiannya kemudian menjadikan setiap komponen setiap baris berbeda. Caranya dengan membukanya di browser, kemudian meng-copy source code dari tampilan yang terbentuk dari `{{form.as_table}}` dan hanya memodifikasi strukturnya tanpa memodifikasi atribut-atributnya.
+- Untuk halaman login dan register, pesan error atau pesan sukses akan ditampilkan di bawah tombol login/register, masih didalam card besar.
+- Halaman login dan register saling memiliki referensi ke masing-masing, pada halaman login terdapat link ke halaman register dan sebaliknya.
+</details>
+<details>
+<summary>Kustomisasi halaman daftar inventori</summary>
+
+Berikut source code dari halaman utama (daftar inventori): [main.html](/main/templates/main.html)
+
+![](https://media.discordapp.net/attachments/1133956580728127550/1158949983341531226/image.png?ex=651e1bc8&is=651cca48&hm=8590c0e9453b08004a23eb23fac57b48fe41be84b1c652ffded985eff6beda26&=&width=1181&height=566)
+![](https://media.discordapp.net/attachments/1133956580728127550/1158950070960537640/image.png?ex=651e1bdd&is=651cca5d&hm=e0111fe54d94431c008d34b0842533737ce6e914bb91b588b07c504598582929&=&width=255&height=566)
+
+- Saya menambahkan navbar. Di sebelah paling kiri terdapat nama aplikasi yang juga link ke halaman utama. Di sebelah paling kanan, terdapat informasi user dan tombol logout. Pada mobile design, terdapat tombol add item di tengah navbar, serta tombol logout di kanan berada di sebuah dropdown yang muncul apabila icon user ditekan.
+- Pada desktop design, tombol add new item berada tepat di bawah navbar, sebelum list dari tiap-tiap barang. Pada mobile design, tombol ini tidak ada dan digantikan dengan tombol yang ada pada tengah navbar.
+- Setiap item ditampilkan sebagai suatu card (self-defined menggunakan Tailwind). Pada card tersebut terdapat nama item, jumlah yang bisa di-decrement atau increment, tombol hapus, dan deskripsi barang. Pada desktop design, setiap baris akan menampilkan 3 card/3 item, tetapi pada mobile design setiap baris hanya akan menampilkan 1 item.
+</details>
+
+### Manfaat dari tiap element selector
+
+- Universal selector:
+
+```css
+* {
+  ...;
+}
+```
+
+Universal selector memilih semua elemen yang terdapat pada suatu halaman HTML dan meng-apply semua style yang didefinisikan didalamnya. Selector ini cocok digunakan apabila kita ingin meng-apply suatu style pada keseluruhan bagian website, misalnya font, warna background, dan sebagainya.
+
+- Inline styles
+
+```html
+<h1 style="color: black"></h1>
+```
+
+Inline styles adalah selector yang digunakan langsung pada elemen spesifik yang ingin kita ubah penampilannya dalam bentuk atribut pada HTML tag. Dapat digunakan apabila kita ingin override style-style yang sudah didefinisikan, karena inline styles memiliki presedensi/prioritas tertinggi.
+
+- ID selector
+
+```css
+#test {
+  color: green;
+}
+```
+
+ID selector hanya memilih elemen dengan ID tertentu untuk memberikan style yang lebih spesifik juga. Karena ID selector memiliki presedensi/prioritas tertinggi kedua setelah inline styles, ID selector dapat digunakan apabila kita ingin override style lain yang sudah didefinisikan SELAIN style yang ada pada inline styles. Karena ID bersifat unik untuk setiap elemen, maka ID selector bersifat cukup spesifik.
+
+- Class selector
+
+```css
+.test {
+  color: blue;
+}
+```
+
+Class selector memilih elemen yang memiliki class-class yang sama untuk diberikan style. Tipe selector ini paling umum digunakan dalam CSS karena style yang diberikan dapat di-apply secara keseluruhan pada halaman web hanya dengan memberikan class-class yang sesuai pada elemen yang sesuai pula. Cocok digunakan apabila kita ingin memberikan style yang sama pada beberapa elemen dengan style yang sama.
+
+- Element selector
+
+```css
+h1 {
+  color: red;
+}
+```
+
+Element selector memilih elemen-elemen HTML dan meng-apply efek tersebut ke seluruh elemen yang bertipe sama. Cocok digunakan apabila kita ingin memberikan style hanya pada elemen tertentu, misalnya font pada \<h1>, \<p>, dan elemen-elemen lainnya.
+
+### Jelaskan HTML5 Tag yang kamu ketahui
+
+- \<aside>: Digunakan untuk mendefinisikan konten yang tidak terlalu berkaitan dengan konten pada halaman website, misalnya side bar.
+- \<header>: Digunakan untuk mendefinisikan bagian atas dari sebuah halaman web.
+- \<footer>: Digunakan untuk mendefinisikan bagian bawah dari sebuah halaman web.
+- \<section>: Digunakan untuk mendefinisikan section berbeda dari dokumen/halaman web.
+- \<nav>: Digunakan untuk mendefinisikan navigation bar.
+- \<article>: Digunakan untuk mendefinisikan sebuah bagian konten dari dokumen/halaman web, misalnya artikel koran atau blog.
+
+### Jelaskan perbedaan antara margin dan padding.
+
+Margin memberikan efek berupa memberi jarak antara objek dengan objek lain **di luar** objek tersebut, sementara padding memberikan efek berupa memberi jarak antara border objek dengan objek lain **di dalam** objek tersebut.
+
+Sebagai contoh, kita bisa melihat pada card yang saya definisikan di halaman utama. Meskipun saya tidak menggunakan margin, margin dapat digunakan untuk memberikan jarak antar card. Sementara itu, padding digunakan untuk memberikan jarak antara border objek dengan teks yang ada di dalam card, sehingga teks tidak menempel pada border objek.
+
+### Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap.
+
+| Tailwind CSS                                                                                                         | Bootstrap                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Bersifat utility-first, menggabungkan class-class yang ada untuk membentuk style                                     | Bersifat component-first, menggunakan komponen yang telah didefinisikan                           |
+| Pada production build, Tailwind hanya akan menghasilkan CSS yang digunakan (class yang tidak digunakan tidak dibuat) | Menyertakan banyak komponen yang belum tentu digunakan, dapat membuat ukuran halaman lebih besar  |
+| Sangat fleksibel dalam kustomisasi, bisa menambahkan class sendiri dan sebagainya                                    | Kustomisasi lebih terbatas, namun sudah menyediakan style dan tema                                |
+| Cocok digunakan apabila kita ingin punya kontrol luas terhadap desain, misalnya untuk website dengan desain unik.    | Cocok digunakan untuk proyek yang butuh pengembangan secara cepat dengan komponen yang sudah ada. |
