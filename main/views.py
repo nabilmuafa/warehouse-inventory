@@ -90,10 +90,9 @@ def add_items_ajax(request):
         return HttpResponse(b"CREATED", status=201)
     return HttpResponseNotFound()
         
-
 def delete(request, id):
     Item.objects.filter(pk=id).delete()
-    return HttpResponseRedirect(reverse("main:show_main"))
+    return HttpResponse(b"DELETED", status=201)
 
 def decrement(request, id):
     item = Item.objects.get(pk=id)
