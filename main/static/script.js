@@ -12,6 +12,22 @@ window.addEventListener("DOMContentLoaded", (event) => {
     });
   }
 
+  function openModal() {
+    const modal = document.getElementById("modal");
+    modal.style.display = "block";
+  }
+
+  function closeModal() {
+    const modal = document.getElementById("modal");
+    modal.style.display = "none";
+  }
+
+  document.getElementById("modal-button").addEventListener("click", openModal);
+  // document
+  //   .getElementById("confirm-modal")
+  //   .addEventListener("click", addProduct);
+  document.getElementById("cancel-modal").addEventListener("click", closeModal);
+
   async function getItems() {
     return fetch("user-json/").then((res) => res.json());
   }
