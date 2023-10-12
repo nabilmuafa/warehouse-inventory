@@ -109,3 +109,7 @@ def show_json(request):
 def show_json_by_id(request, id):
     data = Item.objects.filter(pk=id)
     return HttpResponse(serializers.serialize('json', data), content_type="application/json")
+
+def get_json_by_user(request):
+    data = Item.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', data))
