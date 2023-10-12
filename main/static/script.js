@@ -31,4 +31,5 @@ window.addEventListener("DOMContentLoaded", (event) => {
     .getElementById("confirm-modal")
     .addEventListener("click", closeModal);
   document.getElementById("cancel-modal").addEventListener("click", closeModal);
+  document.getElementById("modal-panel").addEventListener("click", closeModal);
 });
