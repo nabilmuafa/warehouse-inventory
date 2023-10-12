@@ -1,6 +1,8 @@
 window.addEventListener("DOMContentLoaded", (event) => {
   const userBtn = document.getElementById("user-dropdown");
   const dropdownContent = document.getElementById("dropdown-content");
+  const modal = document.getElementById("modal");
+
   if (userBtn) {
     userBtn.addEventListener("click", function () {
       dropdownContent.classList.toggle("hidden");
@@ -13,13 +15,11 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   function openModal() {
-    const modal = document.getElementById("modal");
-    modal.style.display = "block";
+    modal.classList.remove("hidden");
   }
 
   function closeModal() {
-    const modal = document.getElementById("modal");
-    modal.style.display = "none";
+    modal.classList.add("hidden");
   }
 
   document.getElementById("modal-button").addEventListener("click", openModal);
