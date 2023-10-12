@@ -1,6 +1,6 @@
 import datetime
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.core import serializers
 from main.forms import ItemForm
 from django.urls import reverse
@@ -9,6 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -74,6 +75,21 @@ def create_item(request):
 
     context = {'form': form}
     return render(request, "create_item.html", context)
+
+@csrf_exempt
+def add_items_ajax(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        amount = request.POST.get("amount")
+        description = request.POST.get("description")
+        user = request.user
+
+        new_item = Item(name=name, amount=amount, description=description, user=user)
+        new_item.save()
+
+        return HttpResponse(b"CREATED", status=201)
+    return HttpResponseNotFound()
+        
 
 def delete(request, id):
     Item.objects.filter(pk=id).delete()

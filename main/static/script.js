@@ -23,10 +23,21 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   document.getElementById("modal-button").addEventListener("click", openModal);
-  // document
-  //   .getElementById("confirm-modal")
-  //   .addEventListener("click", addProduct);
+  document.getElementById("confirm-modal").addEventListener("click", addItems);
+  document
+    .getElementById("confirm-modal")
+    .addEventListener("click", closeModal);
   document.getElementById("cancel-modal").addEventListener("click", closeModal);
+
+  function addItems() {
+    fetch("create-ajax/", {
+      method: "POST",
+      body: new FormData(document.querySelector("#form")),
+    }).then(refreshProducts);
+
+    document.getElementById("form").reset();
+    return false;
+  }
 
   async function getItems() {
     return fetch("user-json/").then((res) => res.json());
