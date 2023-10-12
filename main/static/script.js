@@ -23,6 +23,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   document.getElementById("modal-button").addEventListener("click", openModal);
+  document
+    .getElementById("modal-button-mobile")
+    .addEventListener("click", openModal);
   document.getElementById("confirm-modal").addEventListener("click", addItems);
   document
     .getElementById("confirm-modal")

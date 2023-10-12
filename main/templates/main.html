@@ -22,31 +22,11 @@
     </div>
 </div>
 <div id="modal" class="hidden z-10">
-    <!--
-      Background backdrop, show/hide based on modal state.
-  
-      Entering: "ease-out duration-300"
-        From: "opacity-0"
-        To: "opacity-100"
-      Leaving: "ease-in duration-200"
-        From: "opacity-100"
-        To: "opacity-0"
-    -->
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-        <!--
-          Modal panel, show/hide based on modal state.
-  
-          Entering: "ease-out duration-300"
-            From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            To: "opacity-100 translate-y-0 sm:scale-100"
-          Leaving: "ease-in duration-200"
-            From: "opacity-100 translate-y-0 sm:scale-100"
-            To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        -->
+      <div class="flex min-h-full items-end justify-center p-4 text-center items-center sm:p-0">
         <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-            <div class="bg-white rounded-lg md:px-8 px-6 pt-8 pb-6 mb-8 md:max-w-xl max-w-sm">
+            <div class="bg-white rounded-lg md:px-8 px-6 pt-8 pb-6 md:mb-8 mb-4 md:max-w-xl max-w-sm">
                 <p class="md:text-3xl text-xl font-bold text-slate-700 pb-6">Add New Item</p>
                 <form id="form" method="POST">
                     {% csrf_token %}
@@ -58,27 +38,27 @@
                         </tr>
                         <tr>
                             <td class="py-2">
-                                <input type="text" name="name" maxlength="255" required id="id_name" class="form-control text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg">
+                                <input type="text" name="name" maxlength="255" required id="id_name" class="form-control text-sm md:text-base bg-gray-100 py-2 md:py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg">
                             </td>
                         </tr>  
                         <tr>
-                            <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">
+                            <td class="pt-3 md:pt-6 text-gray-700 font-medium text-sm md:text-base">
                                 <label for="id_amount">Amount:</label>
                             </td>
                         </tr>
                         <tr>
                             <td class="py-2"> 
-                                <input type="number" name="amount" required id="id_amount" class="form-control text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg">
+                                <input type="number" name="amount" required id="id_amount" class="form-control text-sm md:text-base bg-gray-100 py-2 md:py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg">
                             </td>
                         </tr>
                         <tr>
-                            <td class="pt-6 text-gray-700 font-medium text-sm md:text-base">
+                            <td class="pt-3 md:pt-6 text-gray-700 font-medium text-sm md:text-base">
                                 <label for="id_description">Description:</label>
                             </td>
                         </tr>
                         <tr>
                             <td class="py-2">
-                            <textarea name="description" cols="40" rows="10" required id="id_description" class="text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></textarea>
+                            <textarea name="description" cols="40" rows="10" required id="id_description" class="resize-none text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"></textarea>
                             </td>
                         </tr>
                     </table>
