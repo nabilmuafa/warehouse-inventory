@@ -27,6 +27,12 @@ Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/
   - [HTML5 Tag yang saya ketahui](#jelaskan-html5-tag-yang-kamu-ketahui)
   - [Perbedaan antara Margin dan Padding](#jelaskan-perbedaan-antara-margin-dan-padding)
   - [Perbedaan antara framework Tailwind dan Bootstrap](#jelaskan-perbedaan-antara-framework-css-tailwind-dan-bootstrap)
+- [README.md Tugas 6](#tugas-6)
+  - [Implementasi Checklist Tugas 5](#implementasi-checklist-tugas-6)
+  - [Perbedaan asynchronous programming dan synchronous programming](#perbedaan-asynchronous-programming-dengan-synchronous-programming)
+  - [Penjelasan paradigma event-driven programming](#jelaskan-paradigma-event-driven-programming-dan-contoh-penerapan)
+  - [Penerapan asynchronous programming pada AJAX](#jelaskan-penerapan-asynchronous-programming-pada-ajax)
+  - [Perbandingan Fetch API dan jQuery](#perbandingan-fetch-api-dan-jquery)
 
 ## Tugas 2
 
