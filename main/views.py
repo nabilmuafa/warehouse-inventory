@@ -90,9 +90,13 @@ def add_items_ajax(request):
         return HttpResponse(b"CREATED", status=201)
     return HttpResponseNotFound()
         
-def delete(request, id):
-    Item.objects.filter(pk=id).delete()
-    return HttpResponse(b"DELETED", status=201)
+@csrf_exempt
+def delete(request):
+    if request.method == "POST":
+        item_id = request.POST.get("id")
+        Item.objects.filter(pk=item_id).delete()
+        return HttpResponse(b"DELETED", status=201)
+    return HttpResponseNotFound()
 
 def decrement(request, id):
     item = Item.objects.get(pk=id)

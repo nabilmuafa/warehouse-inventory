@@ -45,7 +45,12 @@ async function getItems() {
 }
 
 async function deleteItems(id) {
-  await fetch(`delete/${id}`).then(refreshProducts);
+  let form = new FormData();
+  form.append("id", id);
+  await fetch(`delete/`, {
+    method: "POST",
+    body: form,
+  }).then(refreshProducts);
 }
 
 async function refreshProducts() {
