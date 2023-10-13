@@ -140,7 +140,3 @@ def show_json_by_id(request, id):
 def get_json_by_user(request):
     data = Item.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', data))
-
-def get_json_by_id(request, id):
-    data = Item.objects.filter(user=request.user, pk=id)
-    return HttpResponse(serializers.serialize('json', data))
