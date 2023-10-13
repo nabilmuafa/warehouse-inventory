@@ -98,20 +98,28 @@ def delete(request):
         return HttpResponse(b"DELETED", status=201)
     return HttpResponseNotFound()
 
-def decrement(request, id):
-    item = Item.objects.get(pk=id)
-    if item.amount == 1:
-        messages.info(request, "Jumlah item tidak boleh kurang dari 1!")
-    else:
-        item.amount -= 1
-        item.save(update_fields=["amount"])
-    return HttpResponseRedirect(reverse("main:show_main"))
+@csrf_exempt
+def decrement(request):
+    if request.method == "POST":
+        item_id = request.POST.get("id")
+        item = Item.objects.get(pk=item_id)
+        if item.amount == 1:
+            messages.info(request, "Jumlah item tidak boleh kurang dari 1!")
+        else:
+            item.amount -= 1
+            item.save(update_fields=["amount"])
+        return HttpResponse(status=201)
+    return HttpResponseNotFound()
 
-def increment(request, id):
-    item = Item.objects.get(pk=id)
-    item.amount += 1
-    item.save(update_fields=["amount"])
-    return HttpResponseRedirect(reverse("main:show_main"))
+@csrf_exempt
+def increment(request):
+    if request.method == "POST":
+        item_id = request.POST.get("id")
+        item = Item.objects.get(pk=item_id)
+        item.amount += 1
+        item.save(update_fields=["amount"])
+        return HttpResponse(status=201)
+    return HttpResponseNotFound()
 
 def show_xml(request):
     data = Item.objects.all()
@@ -131,4 +139,8 @@ def show_json_by_id(request, id):
 
 def get_json_by_user(request):
     data = Item.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', data))
+
+def get_json_by_id(request, id):
+    data = Item.objects.filter(user=request.user, pk=id)
     return HttpResponse(serializers.serialize('json', data))

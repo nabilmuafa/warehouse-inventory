@@ -44,17 +44,44 @@ async function getItems() {
   return fetch("user-json/").then((res) => res.json());
 }
 
+async function getItem(id) {
+  return fetch(`user-json/${id}`).then((res) => res.json());
+}
+
 async function deleteItems(id) {
   let form = new FormData();
   form.append("id", id);
-  await fetch(`delete/`, {
+  await fetch("delete/", {
     method: "POST",
     body: form,
   }).then(refreshProducts);
 }
 
+async function increment(id) {
+  let form = new FormData();
+  form.append("id", id);
+  await fetch("inc/", {
+    method: "POST",
+    body: form,
+  });
+  let item = await getItem(id);
+  document.getElementById(`amount-field-${id}`).innerHTML =
+    item[0].fields.amount;
+}
+
+async function decrement(id) {
+  let form = new FormData();
+  form.append("id", id);
+  await fetch("dec/", {
+    method: "POST",
+    body: form,
+  });
+  let item = await getItem(id);
+  document.getElementById(`amount-field-${id}`).innerHTML =
+    item[0].fields.amount;
+}
+
 async function refreshProducts() {
-  document.getElementById("items-display").innerHTML = "";
   let items = await getItems();
   let htmlString = ``;
   items.forEach((el) => {
@@ -63,17 +90,17 @@ async function refreshProducts() {
           <p class="text-xl md:text-2xl font-bold">${el.fields.name}</p>
           <div class="flex font text-sm md:text-base items-center text-lg md:gap-6 gap-4">
               <div class="flex amount-modifier rounded-lg border-2 items-center gap-4 md:px-2 px-1 py-1">
-                  <a class="dec-btn rounded-full text-blue-500 transition-color ease-in-out duration-100 md:hover:bg-white hover:bg-gray-300 md:hover:text-blue-500" href="dec/${el.pk}">
+                  <button class="dec-btn rounded-full text-blue-500 transition-color ease-in-out duration-100 md:hover:bg-white hover:bg-gray-300 md:hover:text-blue-500" onclick="decrement(${el.pk})">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
                       </svg>                                          
-                  </a>
-                  <p class="amt pt-0.5 md:pt-0">${el.fields.amount}</p>
-                  <a class="rounded-full text-blue-500 transition-color ease-in-out duration-100 md:hover:bg-white hover:bg-gray-300 md:hover:text-blue-500" href="inc/${el.pk}">
+                  </button>
+                  <p id="amount-field-${el.pk}" class="amt pt-0.5 md:pt-0">${el.fields.amount}</p>
+                  <button class="rounded-full text-blue-500 transition-color ease-in-out duration-100 md:hover:bg-white hover:bg-gray-300 md:hover:text-blue-500" onclick="increment(${el.pk})">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
                       </svg>                                                  
-                  </a>
+                  </button>
               </div>
               <button class="transition-color ease-in-out duration-100 hover:text-red-500" onclick="deleteItems(${el.pk})">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
