@@ -1101,3 +1101,449 @@ Sebagai contoh, kita bisa melihat pada card yang saya definisikan di halaman uta
 | Pada production build, Tailwind hanya akan menghasilkan CSS yang digunakan (class yang tidak digunakan tidak dibuat) | Menyertakan banyak komponen yang belum tentu digunakan, dapat membuat ukuran halaman lebih besar  |
 | Sangat fleksibel dalam kustomisasi, bisa menambahkan class sendiri dan sebagainya                                    | Kustomisasi lebih terbatas, namun sudah menyediakan style dan tema                                |
 | Cocok digunakan apabila kita ingin punya kontrol luas terhadap desain, misalnya untuk website dengan desain unik.    | Cocok digunakan untuk proyek yang butuh pengembangan secara cepat dengan komponen yang sudah ada. |
+
+## Tugas 6
+
+### Implementasi Checklist Tugas 6
+
+<details>
+<summary>Pengambilan item dengan AJAX GET</summary>
+
+Untuk mengambil item dengan AJAX GET, code yang meng-generate cards di dalam main.html saya hapus, agar bagian tersebut secara dinamis diisi oleh code pada JavaScript.
+
+main.html:
+
+```html
+...
+<div
+  id="items-display"
+  class="grid-cols-1 md:grid-cols-3 grid gap-2 md:gap-4 md:mt-8 mt-2 px-2 pb-12 md:px-0"
+></div>
+...
+```
+
+script.js:
+
+```javascript
+async function refreshProducts() {
+  let items = await getItems();
+  let htmlString = ``;
+  items.forEach((el) => {
+    htmlString += `\n<div class="h-72 md:h-80 bg-white border-2 border-gray-200 rounded-lg p-6">
+      <div class="flex flex-wrap justify-between items-center md:pb-4 pb-3">
+          <p class="text-xl md:text-2xl font-bold">${el.fields.name}</p>
+          <div class="flex font text-sm md:text-base items-center text-lg md:gap-6 gap-4">
+              <div class="flex amount-modifier rounded-lg border-2 items-center gap-4 md:px-2 px-1 py-1">
+                  <button ${
+                    el.fields.amount == 1 ? "disabled " : ""
+                  }class="dec-btn rounded-full text-blue-500 disabled:text-gray-500 transition-color ease-in-out duration-100 md:hover:bg-white hover:bg-gray-300 disabled:md:hover:text-gray-500 md:hover:text-blue-500" onclick="decrement(${
+      el.pk
+    })">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                      </svg>                                          
+                  </button>
+                  <p id="amount-field-${el.pk}" class="amt pt-0.5 md:pt-0">${
+      el.fields.amount
+    }</p>
+                  <button class="rounded-full text-blue-500 transition-color ease-in-out duration-100 md:hover:bg-white hover:bg-gray-300 md:hover:text-blue-500" onclick="increment(${
+                    el.pk
+                  })">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                      </svg>                                                  
+                  </button>
+              </div>
+              <button class="transition-color ease-in-out duration-100 hover:text-red-500" onclick="deleteItems(${
+                el.pk
+              })">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>                      
+              </button>
+          </div>
+      </div>
+      <p class="text-sm md:text-base">${el.fields.description}</p>
+  </div>`;
+  });
+
+  document.getElementById("items-display").innerHTML = htmlString;
+}
+```
+
+Bagian kode inilah yang meng-generate cards dari setiap item milik user pada database. Satu `htmlString` adalah satu card, namun penambahannya diiterasi berdasarkan item yang diambil dari fungsi `getItems()`. Berikut isi fungsi `getItems()`:
+
+```js
+async function getItems() {
+  return fetch("user-json/").then((res) => res.json());
+}
+```
+
+Fungsi ini melakukan fetch pada url `user-json/` yang mengembalikan item milik user dalam format JSON. Sebelum melakukan ini, saya membuat fungsi baru pada views yang mengembalikan JSON hanya dari setiap user, kemudian routingnya saya set ke path ini.
+
+views.py:
+
+```python
+def get_json_by_user(request):
+    data = Item.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', data))
+```
+
+urls.py:
+
+```python
+from main.views import ..., get_json_by_user
+
+urlpatterns = [
+  ...
+  path("user-json/", get_json_by_user, name="get-json-by-user")
+]
+```
+
+Setelah fungsi didefinisikan, `refreshProducts()` dipanggil pada baris terakhir kode JavaScript.
+
+</details>
+<details>
+<summary>Tombol yang membuka sebuah modal</summary>
+Untuk modal, code diletakkan di bagian bawah dari setiap card secara fixed dan dengan z-index yang lebih besar (sehingga modal akan muncul di depan cards, bukan di bawah). Berikut code untuk modal:
+
+```html
+<div id="modal" class="hidden z-10">
+  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div
+      id="modal-panel"
+      class="flex min-h-full items-end justify-center p-4 text-center items-center sm:p-0"
+    >
+      <div
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+        onclick="event.stopPropagation()"
+      >
+        <div
+          class="bg-white rounded-lg md:px-8 px-6 pt-8 pb-6 md:mb-8 mb-4 md:max-w-xl max-w-sm"
+        >
+          <p class="md:text-3xl text-xl font-bold text-slate-700 pb-6">
+            Add New Item
+          </p>
+          <form id="form" method="POST">
+            {% csrf_token %}
+            <table class="table-fixed w-full">
+              <tr>
+                <td class="text-gray-700 font-medium text-sm md:text-base">
+                  <label for="id_name">Name:</label>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-2">
+                  <input
+                    type="text"
+                    name="name"
+                    maxlength="255"
+                    required
+                    id="id_name"
+                    class="form-control text-sm md:text-base bg-gray-100 py-2 md:py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="pt-3 md:pt-6 text-gray-700 font-medium text-sm md:text-base"
+                >
+                  <label for="id_amount">Amount:</label>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-2">
+                  <input
+                    type="number"
+                    name="amount"
+                    required
+                    id="id_amount"
+                    class="form-control text-sm md:text-base bg-gray-100 py-2 md:py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="pt-3 md:pt-6 text-gray-700 font-medium text-sm md:text-base"
+                >
+                  <label for="id_description">Description:</label>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-2">
+                  <textarea
+                    name="description"
+                    cols="40"
+                    rows="10"
+                    required
+                    id="id_description"
+                    class="resize-none text-sm md:text-base bg-gray-100 py-3 px-3 md:px-4 border-2 w-full focus:shadow-lg"
+                  ></textarea>
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            id="confirm-modal"
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 sm:ml-3 sm:w-auto"
+          >
+            Add New Product
+          </button>
+          <button
+            id="cancel-modal"
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200 sm:mt-0 sm:w-auto"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Untuk tombol membukanya, saya mengalihfungsikan tombol tambah item yang sudah saya definisikan sebelumnya.
+
+main.html:
+
+```html
+<button
+  id="modal-button"
+  class="hidden md:block bg-blue-500 hover:bg-blue-700 transition-color ease-in-out duration-100 text-white rounded-full py-3 px-10"
+>
+  Add new item
+</button>
+```
+
+Pada `script.js`, tombol ini saya berikan event listener click yang mengarah ke fungsi membuka modal, begitupun tombol-tombol di dalam modal agar ketika tombol cancel atau add product ditekan, modal juga ikut tertutup.
+script.js:
+
+```js
+function openModal() {
+  modal.classList.remove("hidden");
+}
+
+function closeModal() {
+  modal.classList.add("hidden");
+}
+
+document.getElementById("modal-button").addEventListener("click", openModal);
+document
+  .getElementById("modal-button-mobile")
+  .addEventListener("click", openModal);
+document.getElementById("confirm-modal").addEventListener("click", addItems);
+document.getElementById("confirm-modal").addEventListener("click", closeModal);
+document.getElementById("cancel-modal").addEventListener("click", closeModal);
+```
+
+</details>
+<details>
+<summary>Fungsi view baru untuk menambahkan item ke basis data</summary>
+
+Pada `views.py`, saya menambahkan fungsi `add_items_ajax()`:
+
+```python
+...
+from django.views.decorators.csrf import csrf_exempt
+
+...
+@csrf_exempt
+def add_items_ajax(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        amount = request.POST.get("amount")
+        description = request.POST.get("description")
+        user = request.user
+
+        new_item = Item(name=name, amount=amount, description=description, user=user)
+        new_item.save()
+
+        return HttpResponse(b"CREATED", status=201)
+    return HttpResponseNotFound()
+
+...
+```
+
+Fungsi tersebut akan mengambil nilai tiap field dari form yang terdapat di dalam modal, kemudian membuat item baru dengan nilai-nilai tersebut dan menyimpannya ke dalam database.
+
+</details>
+<details>
+<summary>Buat path /create-ajax/</summary>
+
+Untuk fungsi `add_items_ajax()` yang terdapat di `views.py`, saya berikan routing di `urls.py`:
+
+```python
+from main.views import ..., add_items_ajax
+
+urlpatterns = [
+  ...
+  path("create-ajax/", add_items_ajax, name="add_items_ajax")
+]
+```
+
+</details>
+<details>
+<summary>Hubungkan form pada modal ke /create-ajax/</summary>
+
+Pada script.js, saya membuat fungsi yang melakukan fetch pada url `create-ajax/`:
+
+```js
+function addItems() {
+  fetch("create-ajax/", {
+    method: "POST",
+    body: new FormData(document.querySelector("#form")),
+  }).then(refreshProducts);
+
+  document.getElementById("form").reset();
+  return false;
+}
+```
+
+Fungsi ini melakukan fetch dengan method POST, dimana data form yang terdapat pada modal diambil dengan querySelector berdasarkan id dari tag form. Data dibuat menjadi FormData, kemudian dimasukkan ke body request. Kemudian `refreshProducts` akan dipanggil agar cards yang ada pada halaman diupdate sesuai yang telah ditambahkan. Setelah itu, isi form akan dikosongkan kembali.
+
+</details>
+<details>
+<summary>Refresh pada halaman utama asinkronus</summary>
+
+Hal ini sudah diimplementasikan pada `refreshProduct()` yang terdapat pada `script.js`, serta sudah dipanggil setelah fungsi `fetch()` pada `addItems()` dijalankan.
+
+```js
+async function refreshProducts() {
+  let items = await getItems();
+  let htmlString = ``;
+  items.forEach((el) => {
+    htmlString += `<isi setiap card (implementasi sudah ditulis juga di atas, biar tidak terlalu panjang)>`;
+  });
+
+  document.getElementById("items-display").innerHTML = htmlString;
+}
+```
+
+</details>
+<details>
+<summary>Melakukan collectstatic</summary>
+
+Sebelumnya, saya mengkonfigurasi ulang pengaturan-pengaturan static files yang ada pada `settings.py`:
+
+```python
+...
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+...
+```
+
+STATIC_URL adalah directory yang akan digunakan website ketika 'disajikan' untuk mengambil static files, sementara STATIC_ROOT adalah folder tempat static files dari semua app akan dikumpulkan.
+
+Selain itu, untuk best practice(?) saya memindahkan folder static **asli** saya ke dalam folder app main (main/). Lalu, saya menjalankan command berikut:
+
+```
+python3 manage.py collectstatic --no-input
+```
+
+Command ini membuat satu folder static baru pada project root yang menyimpan gabungan static files dari semua app (walaupun project ini hanya memiliki 1 app). Dengan command ini, penyajian static files pada produksi akan lebih mudah dan efisien.
+
+</details>
+<details>
+<summary>Implementasi Bonus</summary>
+
+#### AJAX DELETE
+
+Saya memodifikasi fungsi delete yang terdapat pada `views.py` menjadi delete dengan POST request:
+
+```python
+@csrf_exempt
+def delete(request):
+    if request.method == "POST":
+        item_id = request.POST.get("id")
+        Item.objects.filter(pk=item_id).delete()
+        return HttpResponse(b"DELETED", status=201)
+    return HttpResponseNotFound()
+```
+
+Saya juga memodifikasi routingnya (urls.py):
+
+```python
+urlpatterns = [
+    ...
+    path('delete/', delete, name="delete"),
+    ...
+]
+```
+
+Kemudian saya membuat fungsi asinkronus baru pada `script.js` untuk menghandle fungsionalitas hapus:
+
+```js
+async function deleteItems(id) {
+  let form = new FormData();
+  form.append("id", id);
+  await fetch("delete/", {
+    method: "POST",
+    body: form,
+  }).then(refreshProducts);
+}
+```
+
+Fungsi ini akan membuat form baru, kemudian menambahkan field id kepada form. Ketika fungsi melakukan fetch pada delete/, fungsi delete pada views dapat mengambil value dari field id tersebut dan menghapus item dengan id berkaitan. Setelah item dihapus, halaman akan direfresh secara asinkronus
+
+Kemudian pada setiap tombol hapus, saya meng-assign tombol tersebut dengan fungsi `deleteItems()` ini dengan memberikan id dari item yang akan dihapus sebagai argumen fungsi, sehingga fungsi deleteItems tahu item dengan id mana yang harus dihapus.
+
+```html
+<button
+  class="transition-color ease-in-out duration-100 hover:text-red-500"
+  onclick="deleteItems(${el.pk})"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    stroke="currentColor"
+    class="w-6 h-6"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+    />
+  </svg>
+</button>
+```
+
+</details>
+
+### Perbedaan asynchronous programming dengan synchronous programming
+
+| Synchronous programming                                                              | Asynchronous programming                                                                                                   |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Task atau code dijalankan secara sequential dari atas ke bawah                       | Task atau code dijalankan secara sequential tanpa memperhatikan apakah eksekusi sudah selesai                              |
+| Task berikutnya akan dijalankan setelah task sebelumnya sudah selesai dijalankan     | Task berikutnya akan tetap dijalankan meskipun task saat ini belum selesai                                                 |
+| Tidak perlu di handle seperti asynchronous                                           | Perlu di-handle dengan callback atau promises (menggunakan await, dsb)                                                     |
+| Dapat digunakan apabila kode tidak melakukan fetching (yang biasanya perlu menunggu) | Cocok digunakan jika ingin melakukan suatu task yang tidak perlu menunggu proses lainnya (misal: manipulasi DOM dari AJAX) |
+
+### Jelaskan paradigma event-driven programming dan contoh penerapan
+
+Event-driven programming adalah sebuah paradigma dimana alur sebuah program bergantung pada events yang terjadi, seperti interaksi user (menekan tombol, menginput sesuatu, dll) dan sebagainya yang men-trigger fungsi-fungsi atau callback sebagai respon dari interaksi. Event-driven programming cocok digunakan untuk membuat aplikasi yang dinamis dan interaktif. Pada tugas ini, contoh dari event-driven programming terdapat pada event listener yang di-attach ke tombol untuk membuka modal. Ketika tombol tambahkan item ditekan, terjadi event click, dan kode yang dituliskan akan menjalankan fungsi yang sudah di-attach dengan event berkaitan.
+
+### Jelaskan penerapan asynchronous programming pada AJAX
+
+AJAX adalah singkatan dari Asynchronous Javascript and XML. AJAX merupakan salah satu teknik yang dapat digunakan untuk mengembangkan bagian-bagian website secara asinkronus. Dalam memroses request yang datang dari user, AJAX akan melakukannya dibalik layar (di server) secara asinkronus sehingga munculnya tampilan web tidak perlu menunggu proses tersebut selesai (karena asinkronus, bisa saja halaman web ditampilkan terlebih dahulu lalu datanya menyusul). Salah satu penerapan asynchronous programming pada AJAX adalah dengan Fetch API. Fungsi fetch dari Fetch API akan mengirimkan request ke suatu URL dan menerima respons yang kemudian dapat ditampilkan pada website. Biasanya, hasil dari pemanggilan fetch() adalah sebuah Promise, dan untuk menjadikan Promise ini data yang bermakna, akan dibutuhkan asynchronous programming dengan menggunakan sintaks async dan await. Setelah data diterima, AJAX bisa memodifikasi bagian website yang berkaitan tanpa perlu me-refresh seisi halaman website. Hal ini dapat menjadikan halaman web lebih efisien.
+
+### Perbandingan Fetch API dan jQuery
+
+| Fetch API                                                              | jQuery                                                               |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Lebih banyak digunakan pada browser modern                             | Merupakan library eksternal JavaScript                               |
+| Dapat melakukan HTTP Request dan menerima respons                      | Menyediakan fitur-fitur lain selain HTTP/XML request seperti animasi |
+| Menggunakan `fetch` dan `response`                                     | Menggunakan callback `success` dan `error`                           |
+| Menggunakan `try/catch` untuk handle error                             | Menggunakan callback `error` atau `fail`.                            |
+| Me-return Promise untuk handle kode asynchronous                       | Menggunakan callback untuk handle kode asynchronous                  |
+| Konfigurasi request lebih mudah, misalnya mengatur headers dan method. | Memungkinkan konfigurasi melalui opsi seperti `type` dan `headers`.  |
+| Lebih 'ringan' karena terdapat dalam modern JavaScript                 | Relatif lebih berat karena merupakan library eksternal               |
+
+Menurut saya pribadi, Fetch API lebih optimal untuk digunakan dalam pengembangan web app modern, karena sudah built-in pada JavaScript dan tidak mengharuskan kita mengimpor library eksternal. Akan tetapi, jQuery tetap bisa digunakan apabila kita menginginkan kode yang lebih sederhana terutama untuk proyek-proyek yang cenderung kecil.
