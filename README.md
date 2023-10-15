@@ -32,7 +32,7 @@ Proyek Django untuk tugas mata kuliah Pemrograman Berbasis Platform Ganjil 2023/
   - [Perbedaan asynchronous programming dan synchronous programming](#perbedaan-asynchronous-programming-dengan-synchronous-programming)
   - [Penjelasan paradigma event-driven programming](#jelaskan-paradigma-event-driven-programming-dan-contoh-penerapan)
   - [Penerapan asynchronous programming pada AJAX](#jelaskan-penerapan-asynchronous-programming-pada-ajax)
-  - [Perbandingan Fetch API dan jQuery](#perbandingan-fetch-api-dan-jquery)
+  - [Perbandingan Fetch API dengan jQuery](#perbandingan-fetch-api-dan-jquery)
 
 ## Tugas 2
 
