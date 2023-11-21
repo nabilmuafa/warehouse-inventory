@@ -142,4 +142,4 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ["muhammad-nabil22-tugas.pbp.cs.ui.ac.id"]
+CSRF_TRUSTED_ORIGINS = ["https://muhammad-nabil22-tugas.pbp.cs.ui.ac.id"]
