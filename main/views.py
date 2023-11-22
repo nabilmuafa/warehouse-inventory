@@ -86,6 +86,7 @@ def create_item(request):
     return render(request, "create_item.html", context)
 
 
+@csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
 
